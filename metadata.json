@@ -1,0 +1,6 @@
+{
+  "name": "Antarctic Navigation Decision Support System",
+  "description": "AI-enabled Antarctic sea-ice forecasting, iceberg trajectory prediction, navigation risk engine, and safe fuel-efficient route optimization for polar research vessels (MoES/NCPOR).",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

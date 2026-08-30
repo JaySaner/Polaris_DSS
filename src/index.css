@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-polar-bg: #040914;
+    --color-polar-surface: #071326;
+    --color-polar-card: #0B1A30;
+    --color-polar-ice: #E0F2FE;
+    --color-polar-cyan: #38BDF8;
+    --color-polar-glow: #06B6D4;
+  }
+
+  body {
+    background-color: #040914;
+    color: #F1F5F9;
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow: hidden;
+  }
+}
+
+/* Custom Scrollbar for Polar Telemetry Views */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #060D1A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E293B;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0284C7;
+}
+
+/* Polar Glow and Glass Panel Utility Classes */
+.polar-glass-panel {
+  background: rgba(11, 26, 48, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 189, 248, 0.18);
+  box-shadow: 0 10px 30px -10px rgba(2, 6, 23, 0.7), 0 0 20px -5px rgba(6, 182, 212, 0.1);
+}
+
+.polar-card {
+  background: rgba(7, 19, 38, 0.9);
+  border: 1px solid rgba(30, 58, 95, 0.6);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.polar-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 20px -2px rgba(6, 182, 212, 0.15);
+}
+
+.polar-card-active {
+  background: rgba(12, 35, 64, 0.95);
+  border-color: #38BDF8;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+}
+
+.polar-glow-cyan {
+  text-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+}
+
+.polar-glow-emerald {
+  text-shadow: 0 0 12px rgba(52, 211, 153, 0.6);
+}
+
+.polar-glow-amber {
+  text-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+}
+
+.polar-glow-rose {
+  text-shadow: 0 0 12px rgba(244, 63, 94, 0.6);
+}
+
+@keyframes polar-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+.animate-polar-pulse {
+  animation: polar-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
