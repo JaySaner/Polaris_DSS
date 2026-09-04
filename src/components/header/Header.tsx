@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import {
   Compass,
-  Radio,
+  Search,
+  Bell,
   Clock,
   Activity,
   AlertTriangle,
-  Shield,
   Layers,
-  Database,
-  BarChart2,
-  Ship,
-  Sparkles,
-  RefreshCw,
-  Anchor,
-  CloudSnow,
-  MapPin,
-  Film,
   HelpCircle,
+  UserCheck,
+  Microscope,
+  Sun,
+  Moon,
+  Shield,
+  Radio,
+  Database,
+  Ship,
+  BarChart2,
+  CloudSnow,
+  Film,
+  User,
 } from 'lucide-react';
 import { UserGuideModal } from '../modals/UserGuideModal';
 
@@ -27,6 +30,10 @@ interface HeaderProps {
   onTriggerSimulationEvent: () => void;
   mapProvider: 'antarctic-polar' | 'google-maps-satellite';
   onToggleMapProvider: () => void;
+  userRole: 'navigator' | 'researcher';
+  onToggleRole: () => void;
+  theme: 'dark' | 'light';
+  onToggleTheme: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,25 +43,26 @@ export const Header: React.FC<HeaderProps> = ({
   onTriggerSimulationEvent,
   mapProvider,
   onToggleMapProvider,
+  userRole,
+  onToggleRole,
+  theme,
+  onToggleTheme,
 }) => {
   const [utcTime, setUtcTime] = useState<string>('');
-  const [stationTime, setStationTime] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
 
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const utcHours = now.getUTCHours().toString().padStart(2, '0');
-      const utcMins = now.getUTCMinutes().toString().padStart(2, '0');
-      const utcSecs = now.getUTCSeconds().toString().padStart(2, '0');
-      setUtcTime(`${utcHours}:${utcMins}:${utcSecs} UTC`);
-
-      // Bharati / Maitri Station Time (UTC+5:00)
-      const stnDate = new Date(now.getTime() + 5 * 3600 * 1000);
-      const stnHours = stnDate.getUTCHours().toString().padStart(2, '0');
-      const stnMins = stnDate.getUTCMinutes().toString().padStart(2, '0');
-      const stnSecs = stnDate.getUTCSeconds().toString().padStart(2, '0');
-      setStationTime(`${stnHours}:${stnMins}:${stnSecs}`);
+      const dateStr = now.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        timeZone: 'UTC',
+      }).toUpperCase();
+      const timeStr = now.toISOString().substring(11, 19);
+      setUtcTime(`${dateStr} ${timeStr} UTC`);
     };
 
     updateTime();
@@ -62,152 +70,219 @@ export const Header: React.FC<HeaderProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  const navTabs = [
-    { id: 'dashboard', label: 'Voyage & Map', icon: Compass, badge: 'LIVE' },
-    { id: 'icebergs', label: 'Iceberg Animations', icon: Film, badge: 'NASA SCP' },
+  const secondaryTabs = [
+    { id: 'dashboard', label: 'Home & Map View', icon: Compass },
+    { id: 'routes', label: 'Voyage Planning', icon: BarChart2 },
     { id: 'forecasts', label: '72h Forecasts', icon: CloudSnow },
-    { id: 'routes', label: 'Route Comparison', icon: BarChart2 },
+    { id: 'icebergs', label: 'Iceberg Tracker', icon: Film, badge: 'NASA' },
     { id: 'explainable-ai', label: 'Explainable AI', icon: Shield },
     { id: 'metrics', label: 'AI Validation', icon: Radio },
-    { id: 'datasources', label: 'Satellite Feeds', icon: Database },
+    { id: 'datasources', label: 'Data Feeds', icon: Database },
     { id: 'vessel', label: 'Vessel Profile', icon: Ship },
   ];
+
+  const isLight = theme === 'light';
 
   return (
     <header
       id="console-header"
-      className="bg-[#050E1D] border-b border-cyan-900/40 text-slate-100 flex flex-col z-30 select-none shadow-2xl relative"
+      className={`${
+        isLight
+          ? 'bg-white border-b border-slate-200 text-slate-800'
+          : 'bg-[#0B132B] border-b border-slate-800 text-slate-100'
+      } flex flex-col z-30 select-none font-sans sticky top-0 shadow-sm`}
     >
-      {/* Top Atmospheric Glow Line */}
-      <div className="h-[2px] w-full bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-80" />
-
-      {/* Main Command Bar */}
-      <div className="flex flex-wrap items-center justify-between px-4 py-2.5 gap-3 border-b border-slate-800/60 bg-gradient-to-b from-[#08152B] to-[#050E1D]">
-        {/* Left: Branding & Mission Info */}
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-900/40 border border-cyan-400/40 shadow-[0_0_15px_rgba(6,182,212,0.25)]">
-            <Compass className="w-5 h-5 text-cyan-300 animate-spin-slow" />
-            <div className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold tracking-widest text-cyan-400 uppercase">
-                POLARIS DSS
-              </span>
-              <span className="text-[10px] px-2 py-0.5 bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 rounded-full font-medium">
-                MoES • NCPOR
-              </span>
-              <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 rounded-full font-medium">
-                Polar Code PC5 Safe
-              </span>
+      {/* Primary Top Bar */}
+      <div className="flex items-center justify-between px-4 py-2.5 gap-4">
+        {/* Left: Branding + Global Search */}
+        <div className="flex items-center gap-4 flex-1 max-w-2xl">
+          <div className="flex items-center gap-2.5 flex-shrink-0 cursor-pointer" onClick={() => onSelectTab('dashboard')}>
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
+              <Compass className="w-5 h-5 animate-spin-slow" />
             </div>
-            <h1 className="text-sm font-semibold tracking-tight text-slate-100 font-sans flex items-center gap-1.5">
-              Antarctic Sea-Ice, Iceberg Trajectory & Navigation System
-            </h1>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-extrabold tracking-wider text-slate-900 dark:text-white uppercase">
+                  POLARIS <span className="text-blue-600 dark:text-blue-400">DSS</span>
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                  MoES / NCPOR
+                </span>
+              </div>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none mt-0.5">
+                Antarctic Iceberg & Sea-Ice Navigation System
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Search */}
+          <div className="relative flex-1 hidden md:block max-w-xs ml-2">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search waypoints, icebergs, vessel data..."
+              className={`w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border transition outline-none ${
+                isLight
+                  ? 'bg-slate-50 border-slate-200 focus:bg-white focus:border-blue-500 text-slate-800 placeholder-slate-400'
+                  : 'bg-slate-900 border-slate-700 focus:border-blue-400 text-slate-200 placeholder-slate-500'
+              }`}
+            />
           </div>
         </div>
 
-        {/* Right: Telemetry Clocks, UI Guide, Scenario Simulation, Map Engine Switcher */}
-        <div className="flex items-center flex-wrap gap-2.5 text-xs">
-          {/* Synchronized Polar Clocks */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#091830] border border-cyan-500/20 rounded-lg text-slate-200 shadow-inner">
-            <Clock className="w-3.5 h-3.5 text-cyan-400" />
-            <div className="flex items-center gap-2 text-[11px]">
-              <span className="font-semibold text-slate-100 font-mono">{utcTime || '02:30:00 UTC'}</span>
-              <span className="text-slate-600">|</span>
-              <span className="text-cyan-300 font-mono" title="Indian Antarctic Stations (Bharati / Maitri Time)">
-                STN (UTC+5): {stationTime || '07:30:00'}
-              </span>
-            </div>
+        {/* Center / Status info */}
+        <div className="hidden lg:flex items-center gap-4 text-xs font-medium">
+          {/* Live Status Pill */}
+          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="font-semibold text-[11px]">LIVE DATA STREAM</span>
           </div>
 
-          {/* Quick UI Guide Modal Trigger */}
-          <button
-            id="btn-open-user-guide"
-            onClick={() => setIsGuideOpen(true)}
-            title="Open Interactive System Guide & Visual Map Explanations"
-            className="px-3 py-1.5 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-400/50 hover:border-cyan-300 text-cyan-200 rounded-lg transition flex items-center gap-1.5 text-xs font-semibold shadow-[0_0_12px_rgba(6,182,212,0.25)] active:scale-95"
-          >
-            <HelpCircle className="w-4 h-4 text-cyan-300" />
-            <span>UI Guide</span>
-          </button>
+          {/* UTC Clock */}
+          <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md">
+            <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span>{utcTime || '05 SEP 2026 01:38:00 UTC'}</span>
+          </div>
+        </div>
 
-          {/* Map Engine Toggle */}
-          <button
-            id="btn-toggle-map-provider"
-            onClick={onToggleMapProvider}
-            title="Toggle between South Polar Stereographic Canvas and Google Maps Satellite"
-            className="px-3 py-1.5 bg-[#091830] hover:bg-[#0E2448] border border-cyan-500/30 hover:border-cyan-400 text-slate-200 hover:text-cyan-200 rounded-lg transition flex items-center gap-1.5 text-xs font-medium shadow-sm"
-          >
-            <Layers className="w-3.5 h-3.5 text-cyan-400" />
-            <span>Map: {mapProvider === 'antarctic-polar' ? 'Polar 3D Canvas' : 'Satellite View'}</span>
-          </button>
-
-          {/* Simulate Hazardous Drift Event Button */}
-          <button
-            id="btn-simulate-event-header"
-            onClick={onTriggerSimulationEvent}
-            title="Simulate sudden iceberg accelerated drift into transit lane to trigger automated bypass reroute"
-            className="px-3 py-1.5 bg-rose-950/80 hover:bg-rose-900 border border-rose-500/60 hover:border-rose-400 text-rose-200 rounded-lg transition flex items-center gap-1.5 text-xs font-semibold shadow-[0_0_15px_rgba(244,63,94,0.2)] active:scale-95"
-          >
-            <Activity className="w-3.5 h-3.5 text-rose-400 animate-pulse" />
-            <span>Simulate Berg Drift Surge</span>
-          </button>
-
-          {/* Alert Status Pill */}
-          {activeAlertCount > 0 ? (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-950/90 text-amber-200 border border-amber-500/60 rounded-lg font-semibold text-xs animate-pulse">
-              <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
-              <span>{activeAlertCount} Warning{activeAlertCount > 1 ? 's' : ''}</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-emerald-950/60 text-emerald-300 border border-emerald-500/40 rounded-lg text-xs font-medium">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Normal Operations</span>
+        {/* Right Controls & User Info */}
+        <div className="flex items-center gap-2">
+          {/* Active Alerts Pill */}
+          {activeAlertCount > 0 && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-amber-500 text-white font-bold text-xs rounded-md shadow-sm animate-pulse">
+              <AlertTriangle className="w-3.5 h-3.5" />
+              <span>{activeAlertCount}</span>
             </div>
           )}
+
+          {/* Drift Surge Simulation */}
+          <button
+            onClick={onTriggerSimulationEvent}
+            title="Simulate sudden iceberg drift surge"
+            className="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95"
+          >
+            <Activity className="w-3.5 h-3.5 animate-pulse" />
+            <span className="hidden xl:inline">Drift Surge</span>
+          </button>
+
+          {/* Map Layer Switcher */}
+          <button
+            onClick={onToggleMapProvider}
+            title="Toggle Polar / Satellite map view"
+            className={`p-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition ${
+              isLight
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
+            }`}
+          >
+            <Layers className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span className="hidden sm:inline">
+              {mapProvider === 'antarctic-polar' ? 'Polar' : 'Satellite'}
+            </span>
+          </button>
+
+          {/* Role Switcher */}
+          <button
+            onClick={onToggleRole}
+            title={`Current Role: ${userRole}. Click to toggle.`}
+            className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition ${
+              userRole === 'navigator'
+                ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800'
+                : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800'
+            }`}
+          >
+            {userRole === 'navigator' ? (
+              <>
+                <UserCheck className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Navigator</span>
+              </>
+            ) : (
+              <>
+                <Microscope className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Researcher</span>
+              </>
+            )}
+          </button>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={onToggleTheme}
+            title="Toggle Theme"
+            className={`p-1.5 rounded-lg border transition ${
+              isLight
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
+            }`}
+          >
+            {isLight ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-blue-400" />}
+          </button>
+
+          {/* Help / Guide button */}
+          <button
+            onClick={() => setIsGuideOpen(true)}
+            className={`p-1.5 rounded-lg border transition ${
+              isLight
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+                : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
+            }`}
+            title="System User Guide"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+          </button>
+
+          {/* User Badge */}
+          <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
+            <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-200 font-bold text-xs">
+              <User className="w-4 h-4" />
+            </div>
+            <div className="hidden xl:block">
+              <p className="text-xs font-bold leading-none text-slate-800 dark:text-slate-200">Team Catalyst</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 capitalize">{userRole}</p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Modern Navigation Tabs Ribbon */}
-      <nav
-        id="console-nav-tabs"
-        className="flex items-center overflow-x-auto px-4 bg-[#050D1C] scrollbar-none border-b border-cyan-900/30"
-      >
-        <div className="flex space-x-1 py-1.5">
-          {navTabs.map((tab) => {
-            const Icon = tab.icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                id={`nav-tab-${tab.id}`}
-                onClick={() => onSelectTab(tab.id)}
-                className={`px-3.5 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-2 whitespace-nowrap relative ${
-                  isActive
-                    ? 'text-cyan-200 bg-gradient-to-b from-[#0C254A] to-[#091D3B] border border-cyan-400/50 shadow-[0_0_15px_rgba(6,182,212,0.2)] font-semibold'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-[#081730]/60'
-                }`}
-              >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-cyan-300' : 'text-slate-400'}`} />
-                <span>{tab.label}</span>
-                {tab.badge && (
-                  <span className="text-[9px] px-1.5 py-0.2 bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 rounded font-bold">
-                    {tab.badge}
-                  </span>
-                )}
-                {isActive && (
-                  <span className="absolute bottom-0 left-2 right-2 h-[2px] bg-cyan-400 rounded-full shadow-[0_0_8px_#38bdf8]" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+      {/* Secondary Horizontal Nav Ribbon */}
+      <nav className={`flex items-center overflow-x-auto px-4 py-1 gap-1 border-t scrollbar-none ${
+        isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-800'
+      }`}>
+        {secondaryTabs.map((tab) => {
+          const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onSelectTab(tab.id)}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap ${
+                isActive
+                  ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                  : isLight
+                  ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+              }`}
+            >
+              <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
+              <span>{tab.label}</span>
+              {tab.badge && (
+                <span className={`text-[9px] px-1 py-0.2 rounded font-bold ${
+                  isActive ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
+                }`}>
+                  {tab.badge}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </nav>
 
-      {/* Render User Guide Modal */}
+      {/* User Guide Modal */}
       <UserGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </header>
   );
 };
-

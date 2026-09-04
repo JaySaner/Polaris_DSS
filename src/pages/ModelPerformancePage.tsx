@@ -1,5 +1,4 @@
 import React from 'react';
-import { ModelMetricData } from '../types';
 import { modelMetricsService } from '../services/modelMetricsService';
 import {
   ResponsiveContainer,
@@ -13,13 +12,6 @@ import {
 } from 'recharts';
 import {
   Radio,
-  CheckCircle2,
-  Database,
-  Cpu,
-  Award,
-  Layers,
-  Activity,
-  FileText,
   Sparkles,
 } from 'lucide-react';
 
@@ -35,31 +27,31 @@ export const ModelPerformancePage: React.FC = () => {
   ];
 
   return (
-    <div id="model-performance-page" className="flex-1 bg-[#040914] text-slate-100 p-4 md:p-6 overflow-y-auto space-y-5">
+    <div id="model-performance-page" className="flex-1 bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 p-4 md:p-6 overflow-y-auto space-y-5 font-sans">
       {/* Header Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-900/30 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-900/40 border border-cyan-400/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+          <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-900/40 border border-blue-300 dark:border-blue-800 text-blue-600 dark:text-blue-400 shadow-sm">
             <Radio className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-base font-bold text-slate-100 tracking-tight">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white tracking-tight">
                 AI/ML Model Benchmarks & Validation Metrics
               </h2>
-              <span className="text-[10px] bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono">
+              <span className="text-[10px] bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 px-2 py-0.5 rounded-full font-mono font-semibold">
                 Production Validated
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               Quantitative validation metrics (MAE, RMSE, R², Position Error) across 14-year Antarctic satellite datasets
             </p>
           </div>
         </div>
 
-        <div className="text-xs text-slate-400 bg-[#071326] px-3 py-1.5 rounded-lg border border-cyan-500/20">
+        <div className="text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
           <span>Validation Benchmark: </span>
-          <span className="text-cyan-300 font-bold">2026 Austral Winter Dataset</span>
+          <span className="text-blue-600 dark:text-blue-400 font-bold">2026 Austral Winter Dataset</span>
         </div>
       </div>
 
@@ -68,52 +60,52 @@ export const ModelPerformancePage: React.FC = () => {
         {metrics.map((m) => (
           <div
             key={m.modelName}
-            className="bg-[#071326]/95 border border-cyan-500/20 p-4 rounded-2xl space-y-3.5 shadow-xl flex flex-col justify-between"
+            className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl space-y-3.5 shadow-sm flex flex-col justify-between"
           >
             <div className="space-y-3">
-              <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2">
-                <span className="font-bold text-slate-100 text-sm tracking-tight">{m.modelName}</span>
-                <span className="text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-mono font-bold">
+              <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2">
+                <span className="font-bold text-slate-900 dark:text-white text-sm tracking-tight">{m.modelName}</span>
+                <span className="text-[10px] bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800 px-2 py-0.5 rounded-full font-mono font-bold">
                   {m.status}
                 </span>
               </div>
-              <div className="text-xs text-slate-400">{m.architecture}</div>
+              <div className="text-xs text-slate-500">{m.architecture}</div>
 
               {/* Metric Scores */}
               <div className="grid grid-cols-3 gap-2 pt-1">
-                <div className="bg-[#050D1A] p-2.5 rounded-xl border border-cyan-500/20 text-center">
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
                   <span className="text-[10px] text-slate-400 block font-semibold">MAE</span>
-                  <span className="text-base font-bold text-cyan-300 font-mono">{m.mae}</span>
+                  <span className="text-base font-bold text-blue-600 dark:text-blue-400 font-mono">{m.mae}</span>
                 </div>
-                <div className="bg-[#050D1A] p-2.5 rounded-xl border border-cyan-500/20 text-center">
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
                   <span className="text-[10px] text-slate-400 block font-semibold">RMSE</span>
-                  <span className="text-base font-bold text-emerald-300 font-mono">{m.rmse}</span>
+                  <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">{m.rmse}</span>
                 </div>
-                <div className="bg-[#050D1A] p-2.5 rounded-xl border border-cyan-500/20 text-center">
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
                   <span className="text-[10px] text-slate-400 block font-semibold">R² SCORE</span>
-                  <span className="text-base font-bold text-amber-300 font-mono">{m.r2}</span>
+                  <span className="text-base font-bold text-amber-600 dark:text-amber-400 font-mono">{m.r2}</span>
                 </div>
               </div>
 
               {/* Training details */}
-              <div className="space-y-1.5 text-xs bg-[#050D1A] p-3 rounded-xl border border-cyan-500/20">
+              <div className="space-y-1.5 text-xs bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Training Window:</span>
-                  <span className="text-slate-200 font-mono">{m.trainingPeriod}</span>
+                  <span className="text-slate-500">Training Window:</span>
+                  <span className="text-slate-800 dark:text-slate-200 font-mono">{m.trainingPeriod}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Dataset Records:</span>
-                  <span className="text-slate-200 font-mono">{m.datasetRecordCount.toLocaleString()} pts</span>
+                  <span className="text-slate-500">Dataset Records:</span>
+                  <span className="text-slate-800 dark:text-slate-200 font-mono">{m.datasetRecordCount.toLocaleString()} pts</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Model Version:</span>
-                  <span className="text-emerald-400 font-bold font-mono">{m.version}</span>
+                  <span className="text-slate-500">Model Version:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">{m.version}</span>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-cyan-900/30 text-xs text-slate-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+            <div className="pt-2 border-t border-slate-100 dark:border-slate-800 text-xs text-slate-500 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>Features: {m.featuresUsed.slice(0, 3).join(', ')}...</span>
             </div>
           </div>
@@ -121,39 +113,39 @@ export const ModelPerformancePage: React.FC = () => {
       </div>
 
       {/* Grid 2: Comparative Iceberg Position Error Bar Chart */}
-      <div className="bg-[#071326]/90 border border-cyan-500/20 p-4 rounded-2xl space-y-3.5 shadow-xl">
-        <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2.5">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-4 rounded-2xl space-y-3.5 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
           <div>
-            <span className="font-semibold text-slate-100 text-xs uppercase tracking-wider block">
+            <span className="font-semibold text-slate-800 dark:text-slate-100 text-xs uppercase tracking-wider block">
               Iceberg Trajectory Position Error Benchmark (km)
             </span>
-            <span className="text-[11px] text-slate-400">
+            <span className="text-[11px] text-slate-500">
               Hybrid Hydrodynamic + ML Model vs. Traditional Pure-Physics Drift Equation
             </span>
           </div>
-          <span className="text-emerald-400 font-mono font-bold text-xs">56.7% Error Reduction</span>
+          <span className="text-emerald-600 dark:text-emerald-400 font-mono font-bold text-xs">56.7% Error Reduction</span>
         </div>
 
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={icebergErrorData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#0F2444" />
-              <XAxis dataKey="horizon" stroke="#64748B" tick={{ fill: '#94A3B8', fontSize: 11 }} />
-              <YAxis unit=" km" stroke="#64748B" tick={{ fill: '#94A3B8', fontSize: 11 }} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis dataKey="horizon" stroke="#94a3b8" tick={{ fill: '#64748b', fontSize: 11 }} />
+              <YAxis unit=" km" stroke="#94a3b8" tick={{ fill: '#64748b', fontSize: 11 }} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#071326', borderColor: '#0284C7', borderRadius: 8 }}
+                contentStyle={{ backgroundColor: '#ffffff', borderColor: '#bfdbfe', borderRadius: 8, fontSize: 12, color: '#0f172a' }}
               />
-              <Legend wrapperStyle={{ fontSize: 11, color: '#94A3B8' }} />
+              <Legend wrapperStyle={{ fontSize: 11, color: '#64748b' }} />
               <Bar
                 dataKey="errorKm"
                 name="AI Hybrid Trajectory Error (km)"
-                fill="#38BDF8"
+                fill="#2563eb"
                 radius={[4, 4, 0, 0]}
               />
               <Bar
                 dataKey="baselinePhysics"
                 name="Traditional Baseline Drift Error (km)"
-                fill="#64748B"
+                fill="#94a3b8"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>

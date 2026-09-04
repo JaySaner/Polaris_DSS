@@ -23,6 +23,7 @@ import { riskEngine } from './services/riskEngine';
 import { routeOptimizer } from './services/routeOptimizer';
 import { alertService } from './services/alertService';
 import { Header } from './components/header/Header';
+import { IconSidebar } from './components/sidebar/IconSidebar';
 import { Footer } from './components/footer/Footer';
 import { HomeDashboard } from './pages/HomeDashboard';
 import { ForecastPage } from './pages/ForecastPage';
@@ -34,8 +35,10 @@ import { VesselProfilePage } from './pages/VesselProfilePage';
 import { IcebergTrackerPage } from './pages/IcebergTrackerPage';
 
 export default function App() {
-  // Navigation State
+  // Navigation, Role & Theme State
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+  const [userRole, setUserRole] = useState<'navigator' | 'researcher'>('navigator');
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mapProvider, setMapProvider] = useState<'antarctic-polar' | 'google-maps-satellite'>('antarctic-polar');
 
   // Vessel Profile State
@@ -156,7 +159,6 @@ export default function App() {
 
   // Scenario Simulation: Simulate Iceberg Sudden Drift Surge (Tests reactive hazard recalculation)
   const handleSimulateDriftSpike = useCallback((bergId: string) => {
-    // 1. Shift target iceberg position closer into the direct corridor
     setIcebergs((prev) =>
       prev.map((b) => {
         if (b.id === bergId || b.id === 'B-001') {
@@ -174,7 +176,6 @@ export default function App() {
       })
     );
 
-    // 2. Trigger critical alert
     const newAlert = alertService.addAlert({
       type: 'CRITICAL',
       title: `HAZARD DETECTED: Iceberg ${bergId} Accelerated Drift Intercept`,
@@ -186,7 +187,6 @@ export default function App() {
 
     setAlerts(alertService.getAlerts());
 
-    // 3. Switch active route to Route B (Ice Bypass) and show notification banner
     setSelectedRouteId('route-b-safety');
     setRecalculationBanner({
       show: true,
@@ -201,9 +201,9 @@ export default function App() {
   return (
     <div
       id="antarctic-dss-application"
-      className="flex flex-col w-full h-screen bg-[#060B19] text-slate-100 font-mono select-none overflow-hidden"
+      className={`flex flex-col w-full h-screen ${theme === 'light' ? 'theme-light bg-slate-50' : 'theme-dark bg-slate-950'} select-none overflow-hidden font-sans`}
     >
-      {/* 1. Scientific Header with Clocks, Tab Navigation, Alert Badge */}
+      {/* 1. Header Bar */}
       <Header
         activeTab={activeTab}
         onSelectTab={(tab) => setActiveTab(tab)}
@@ -213,86 +213,100 @@ export default function App() {
         onToggleMapProvider={() =>
           setMapProvider((p) => (p === 'antarctic-polar' ? 'google-maps-satellite' : 'antarctic-polar'))
         }
+        userRole={userRole}
+        onToggleRole={() => setUserRole((r) => (r === 'navigator' ? 'researcher' : 'navigator'))}
+        theme={theme}
+        onToggleTheme={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
       />
 
-      {/* 2. Main Page Views */}
-      <main id="main-view-container" className="flex-1 flex flex-col overflow-hidden relative">
-        {activeTab === 'dashboard' && (
-          <HomeDashboard
-            layers={layers}
-            onToggleLayer={handleToggleLayer}
-            vessel={vessel}
-            icebergs={icebergs}
-            activeRoute={activeRoute}
-            allRoutes={candidateRoutes}
-            seaIceGrid={seaIceGrid}
-            riskGrid={riskGrid}
-            selectedHorizon={selectedHorizon}
-            onChangeHorizon={setSelectedHorizon}
-            startLocation={startLocation}
-            destination={destination}
-            onSelectStartLocation={(name, coords) => setStartLocation({ name, coords })}
-            onSelectDestination={(name, coords) => setDestination({ name, coords })}
-            objective={objective}
-            onChangeObjective={setObjective}
-            onRecalculateRoutes={handleRecalculateRoutes}
-            alerts={alerts}
-            onAcknowledgeAlert={handleAcknowledgeAlert}
-            onSimulateDriftSpike={handleSimulateDriftSpike}
-            mapProvider={mapProvider}
-            onNavigateToTab={(tab) => setActiveTab(tab)}
-            recalculationBanner={recalculationBanner}
-            onDismissRecalculationBanner={() => setRecalculationBanner(null)}
-          />
-        )}
+      {/* 2. Main Body with Icon Sidebar & View Area */}
+      <div className="flex-1 flex flex-row overflow-hidden relative">
+        {/* Far-left Icon Navigation Sidebar */}
+        <IconSidebar
+          activeTab={activeTab}
+          onSelectTab={(tab) => setActiveTab(tab)}
+          userRole={userRole}
+        />
 
-        {activeTab === 'icebergs' && (
-          <IcebergTrackerPage
-            icebergs={icebergs}
-            vessel={vessel}
-            onSimulateDriftSpike={handleSimulateDriftSpike}
-          />
-        )}
+        {/* Main View Container */}
+        <main id="main-view-container" className="flex-1 flex flex-col overflow-hidden relative bg-slate-50 dark:bg-slate-950">
+          {activeTab === 'dashboard' && (
+            <HomeDashboard
+              layers={layers}
+              onToggleLayer={handleToggleLayer}
+              vessel={vessel}
+              icebergs={icebergs}
+              activeRoute={activeRoute}
+              allRoutes={candidateRoutes}
+              seaIceGrid={seaIceGrid}
+              riskGrid={riskGrid}
+              selectedHorizon={selectedHorizon}
+              onChangeHorizon={setSelectedHorizon}
+              startLocation={startLocation}
+              destination={destination}
+              onSelectStartLocation={(name, coords) => setStartLocation({ name, coords })}
+              onSelectDestination={(name, coords) => setDestination({ name, coords })}
+              objective={objective}
+              onChangeObjective={setObjective}
+              onRecalculateRoutes={handleRecalculateRoutes}
+              alerts={alerts}
+              onAcknowledgeAlert={handleAcknowledgeAlert}
+              onSimulateDriftSpike={handleSimulateDriftSpike}
+              mapProvider={mapProvider}
+              onNavigateToTab={(tab) => setActiveTab(tab)}
+              recalculationBanner={recalculationBanner}
+              onDismissRecalculationBanner={() => setRecalculationBanner(null)}
+            />
+          )}
 
-        {activeTab === 'forecasts' && (
-          <ForecastPage
-            icebergs={icebergs}
-            seaIceGrid={seaIceGrid}
-            vessel={vessel}
-            onSimulateDriftSpike={handleSimulateDriftSpike}
-          />
-        )}
+          {activeTab === 'icebergs' && (
+            <IcebergTrackerPage
+              icebergs={icebergs}
+              vessel={vessel}
+              onSimulateDriftSpike={handleSimulateDriftSpike}
+            />
+          )}
 
-        {activeTab === 'routes' && (
-          <RouteAnalysisPage
-            routes={candidateRoutes}
-            activeRoute={activeRoute}
-            onSelectActiveRoute={(id) => {
-              setSelectedRouteId(id);
-              setActiveTab('dashboard');
-            }}
-            vessel={vessel}
-          />
-        )}
+          {activeTab === 'forecasts' && (
+            <ForecastPage
+              icebergs={icebergs}
+              seaIceGrid={seaIceGrid}
+              vessel={vessel}
+              onSimulateDriftSpike={handleSimulateDriftSpike}
+            />
+          )}
 
-        {activeTab === 'explainable-ai' && (
-          <ExplainableAIPage
-            weights={riskWeights}
-            onUpdateWeights={handleUpdateWeights}
-            activeRoute={activeRoute}
-          />
-        )}
+          {activeTab === 'routes' && (
+            <RouteAnalysisPage
+              routes={candidateRoutes}
+              activeRoute={activeRoute}
+              onSelectActiveRoute={(id) => {
+                setSelectedRouteId(id);
+                setActiveTab('dashboard');
+              }}
+              vessel={vessel}
+            />
+          )}
 
-        {activeTab === 'metrics' && <ModelPerformancePage />}
+          {activeTab === 'explainable-ai' && (
+            <ExplainableAIPage
+              weights={riskWeights}
+              onUpdateWeights={handleUpdateWeights}
+              activeRoute={activeRoute}
+            />
+          )}
 
-        {activeTab === 'datasources' && <DataSourcesPage />}
+          {activeTab === 'metrics' && <ModelPerformancePage />}
 
-        {activeTab === 'vessel' && (
-          <VesselProfilePage vessel={vessel} onUpdateVessel={handleUpdateVessel} />
-        )}
-      </main>
+          {activeTab === 'datasources' && <DataSourcesPage />}
 
-      {/* 3. Scientific Regulatory Disclaimer Footer */}
+          {activeTab === 'vessel' && (
+            <VesselProfilePage vessel={vessel} onUpdateVessel={handleUpdateVessel} />
+          )}
+        </main>
+      </div>
+
+      {/* 3. Footer */}
       <Footer />
     </div>
   );
