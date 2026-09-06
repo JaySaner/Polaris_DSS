@@ -7,14 +7,15 @@ import {
   BarChart2,
   Database,
   Ship,
-  Settings,
   Compass,
+  Microscope,
 } from 'lucide-react';
 
 interface IconSidebarProps {
   activeTab: string;
   onSelectTab: (tab: string) => void;
   userRole: 'navigator' | 'researcher';
+  onToggleRole: () => void;
 }
 
 const navItems = [
@@ -28,7 +29,7 @@ const navItems = [
   { id: 'vessel', icon: Ship, label: 'Vessel' },
 ];
 
-export const IconSidebar: React.FC<IconSidebarProps> = ({ activeTab, onSelectTab, userRole }) => {
+export const IconSidebar: React.FC<IconSidebarProps> = ({ activeTab, onSelectTab, userRole, onToggleRole }) => {
   return (
     <aside className="hidden md:flex flex-col w-16 bg-white border-r border-slate-200 flex-shrink-0 items-center py-3 gap-1 select-none z-20">
       {/* Logo */}
@@ -63,15 +64,29 @@ export const IconSidebar: React.FC<IconSidebarProps> = ({ activeTab, onSelectTab
         })}
       </nav>
 
-      {/* Bottom: Settings */}
-      <div className="mt-auto flex flex-col items-center gap-1 w-full px-1.5">
+      {/* Bottom: Role Toggle */}
+      <div className="mt-auto flex flex-col items-center gap-1 w-full px-1.5 pb-2">
+        <div className="w-full h-px bg-slate-200 mb-1" />
         <button
-          onClick={() => onSelectTab('vessel')}
-          title="Settings"
-          className="w-full flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition"
+          onClick={onToggleRole}
+          title={userRole === 'navigator' ? 'Switch to Researcher View' : 'Switch to Captain View'}
+          className={`w-full flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-semibold transition ${
+            userRole === 'navigator'
+              ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+              : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+          }`}
         >
-          <Settings className="w-5 h-5" strokeWidth={1.8} />
-          <span className="leading-none">Settings</span>
+          {userRole === 'navigator' ? (
+            <>
+              <Ship className="w-5 h-5" strokeWidth={1.8} />
+              <span className="leading-none">Captain</span>
+            </>
+          ) : (
+            <>
+              <Microscope className="w-5 h-5" strokeWidth={1.8} />
+              <span className="leading-none">Research</span>
+            </>
+          )}
         </button>
       </div>
     </aside>

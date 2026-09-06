@@ -41,7 +41,7 @@ export const VoyageTelemetryBar: React.FC<VoyageTelemetryBarProps> = ({
         <button
           id="btn-restore-telemetry-bar"
           onClick={() => setIsDismissed(false)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-sky-50 border border-sky-300 text-sky-700 text-xs font-semibold rounded-xl shadow-md transition active:scale-95"
+          className="flex items-center gap-2 px-3 py-1.5 bg-white dark:bg-slate-900 hover:bg-sky-50 dark:hover:bg-slate-800 border border-sky-300 dark:border-slate-700 text-sky-700 dark:text-sky-300 text-xs font-semibold rounded-xl shadow-md transition active:scale-95"
           title="Restore Voyage Telemetry HUD"
         >
           <Shield className="w-3.5 h-3.5 text-emerald-500" />
@@ -57,7 +57,7 @@ export const VoyageTelemetryBar: React.FC<VoyageTelemetryBarProps> = ({
     return (
       <div
         id="voyage-telemetry-minimized"
-        className="bg-white border-t border-sky-200 text-slate-700 px-4 py-1.5 select-none shadow-md flex items-center justify-between gap-3 z-20 transition-all duration-200"
+        className="bg-white dark:bg-[#070D1A] border-t border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 px-4 py-1.5 select-none shadow-md flex items-center justify-between gap-3 z-20 transition-all duration-200"
       >
         <div className="flex items-center gap-3 overflow-x-auto text-xs">
           <div className="flex items-center gap-1.5">
@@ -135,18 +135,18 @@ export const VoyageTelemetryBar: React.FC<VoyageTelemetryBarProps> = ({
   return (
     <div
       id="voyage-telemetry-bar"
-      className="bg-white border-t border-sky-200 text-slate-700 px-3 py-2 select-none shadow-[0_-2px_10px_rgba(14,116,144,0.1)] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 z-20 transition-all duration-200"
+      className="bg-white dark:bg-[#070D1A] border-t border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 select-none shadow-[0_-2px_10px_rgba(14,116,144,0.1)] flex flex-col md:flex-row items-stretch md:items-center justify-between gap-2.5 z-20 transition-all duration-200"
     >
       {/* 1. Environmental Telemetry Snapshot Cards (Compact Row) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 flex-shrink-0">
         {/* Sea Ice Concentration Exposure */}
-        <div className="bg-sky-50 border border-sky-200 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
+        <div className="bg-sky-50 dark:bg-slate-900/80 border border-sky-200 dark:border-slate-800 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-slate-500 uppercase font-semibold">Ice Exposure</span>
-            <span className="text-[9px] text-sky-600 font-mono">AMSR2</span>
+            <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Ice Exposure</span>
+            <span className="text-[9px] text-sky-600 dark:text-sky-400 font-mono">AMSR2</span>
           </div>
           <div className="flex items-baseline gap-1 mt-0.5">
-            <span className="text-xs font-bold text-sky-700">
+            <span className="text-xs font-bold text-sky-700 dark:text-sky-300">
               {activeRoute ? `${activeRoute.seaIceExposureKm} km` : '48 km'}
             </span>
             <span className="text-[9px] text-slate-400">
@@ -156,17 +156,17 @@ export const VoyageTelemetryBar: React.FC<VoyageTelemetryBarProps> = ({
         </div>
 
         {/* Iceberg Proximity (CPA) */}
-        <div className="bg-rose-50 border border-rose-200 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
+        <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-slate-500 uppercase font-semibold">Iceberg CPA</span>
-            <span className="text-[9px] text-rose-600 font-mono">US-NIC</span>
+            <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Iceberg CPA</span>
+            <span className="text-[9px] text-rose-600 dark:text-rose-400 font-mono">US-NIC</span>
           </div>
           <div className="flex items-baseline gap-1 mt-0.5">
             <span
               className={`text-xs font-bold ${
                 activeRoute && activeRoute.closestIcebergCpaNm < 20
-                  ? 'text-rose-600 animate-pulse'
-                  : 'text-emerald-600'
+                  ? 'text-rose-600 dark:text-rose-400 animate-pulse'
+                  : 'text-emerald-600 dark:text-emerald-400'
               }`}
             >
               {activeRoute ? `${activeRoute.closestIcebergCpaNm} NM` : '28.4 NM'}
@@ -176,25 +176,25 @@ export const VoyageTelemetryBar: React.FC<VoyageTelemetryBarProps> = ({
         </div>
 
         {/* Metocean Wind & Wave */}
-        <div className="bg-amber-50 border border-amber-200 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
+        <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-slate-500 uppercase font-semibold">Wind & Wave</span>
-            <span className="text-[9px] text-amber-600 font-mono">ECMWF</span>
+            <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">Wind & Wave</span>
+            <span className="text-[9px] text-amber-600 dark:text-amber-400 font-mono">ECMWF</span>
           </div>
           <div className="flex items-baseline gap-1 mt-0.5">
-            <span className="text-xs font-bold text-amber-700">38 km/h</span>
+            <span className="text-xs font-bold text-amber-700 dark:text-amber-300">38 km/h</span>
             <span className="text-[9px] text-slate-400">3.2m</span>
           </div>
         </div>
 
         {/* Ocean Current Streamlines */}
-        <div className="bg-cyan-50 border border-cyan-200 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
+        <div className="bg-cyan-50 dark:bg-cyan-950/30 border border-cyan-200 dark:border-cyan-900/50 px-2.5 py-1.5 rounded-lg flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between gap-1">
-            <span className="text-[9px] text-slate-500 uppercase font-semibold">ACC Current</span>
-            <span className="text-[9px] text-cyan-600 font-mono">HYCOM</span>
+            <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase font-semibold">ACC Current</span>
+            <span className="text-[9px] text-cyan-600 dark:text-cyan-400 font-mono">HYCOM</span>
           </div>
           <div className="flex items-baseline gap-1 mt-0.5">
-            <span className="text-xs font-bold text-cyan-700">1.2 kts</span>
+            <span className="text-xs font-bold text-cyan-700 dark:text-cyan-300">1.2 kts</span>
             <span className="text-[9px] text-slate-400">E-WARD</span>
           </div>
         </div>
@@ -202,7 +202,7 @@ export const VoyageTelemetryBar: React.FC<VoyageTelemetryBarProps> = ({
 
       {/* 2. Active Route Safety, Fuel & ETA Command HUD */}
       {activeRoute ? (
-        <div className="flex-1 bg-sky-50 border border-sky-200 px-3 py-1.5 rounded-xl flex flex-wrap items-center justify-between gap-2.5 shadow-sm">
+        <div className="flex-1 bg-sky-50 dark:bg-slate-900/80 border border-sky-200 dark:border-slate-800 px-3 py-1.5 rounded-xl flex flex-wrap items-center justify-between gap-2.5 shadow-sm">
           <div className="flex items-center gap-3">
             {/* Safety Score */}
             <div className="flex items-center gap-1.5">

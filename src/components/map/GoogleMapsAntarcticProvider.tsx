@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Maximize2, Minimize2 } from 'lucide-react';
 import {
   VesselProfile,
   IcebergObservation,
@@ -14,6 +15,7 @@ interface GoogleMapsAntarcticProps {
   activeRoute: CandidateRoute | null;
   onSelectStation: (station: ResearchStation, role: 'start' | 'dest') => void;
   onSelectIceberg: (berg: IcebergObservation) => void;
+  onToggleMapProvider?: () => void;
 }
 
 declare global {
@@ -30,11 +32,31 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
   activeRoute,
   onSelectStation,
   onSelectIceberg,
+  onToggleMapProvider,
 }) => {
+  const outerContainerRef = useRef<HTMLDivElement>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
   const polylineRef = useRef<any>(null);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  const handleToggleFullscreen = () => {
+    const elem = outerContainerRef.current;
+    if (!elem) return;
+
+    if (!document.fullscreenElement) {
+      if (elem.requestFullscreen) elem.requestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const onFs = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onFs);
+    return () => document.removeEventListener('fullscreenchange', onFs);
+  }, []);
 
   useEffect(() => {
     if (!apiKey) return;
@@ -178,10 +200,31 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
   }, [apiKey, vessel, icebergs, activeRoute]);
 
   return (
-    <div id="google-maps-polar-container" className="relative w-full h-full min-h-[480px]">
+    <div id="google-maps-polar-container" ref={outerContainerRef} className="relative w-full h-full min-h-[480px]">
       <div ref={mapContainerRef} className="w-full h-full" />
-      <div className="absolute top-3 left-3 z-10 bg-slate-950/90 border border-slate-700 px-2.5 py-1.5 rounded text-xs font-mono text-cyan-300">
-        Google Maps Satellite Polar View (API Integrated)
+      <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
+        <div className="bg-slate-900/90 backdrop-blur-md border border-cyan-500/40 px-3 py-1.5 rounded-xl text-xs font-mono text-cyan-300 shadow-xl flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+          <span>Google Maps Satellite Polar View</span>
+        </div>
+        {onToggleMapProvider && (
+          <button
+            onClick={onToggleMapProvider}
+            className="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-xl transition flex items-center gap-1.5 active:scale-95"
+          >
+            <span>Switch to Polar Map</span>
+          </button>
+        )}
+      </div>
+
+      <div className="absolute top-3 right-3 z-10">
+        <button
+          onClick={handleToggleFullscreen}
+          title={isFullscreen ? 'Exit Fullscreen' : 'Open Fullscreen Map'}
+          className="p-2 bg-slate-900/90 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-800 rounded-xl shadow-xl backdrop-blur-md transition active:scale-95"
+        >
+          {isFullscreen ? <Minimize2 className="w-4 h-4 text-cyan-400" /> : <Maximize2 className="w-4 h-4" />}
+        </button>
       </div>
     </div>
   );

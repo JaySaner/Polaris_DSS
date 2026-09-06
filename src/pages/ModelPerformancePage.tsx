@@ -73,33 +73,33 @@ export const ModelPerformancePage: React.FC = () => {
 
               {/* Metric Scores */}
               <div className="grid grid-cols-3 gap-2 pt-1">
-                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
-                  <span className="text-[10px] text-slate-400 block font-semibold">MAE</span>
-                  <span className="text-base font-bold text-blue-600 dark:text-blue-400 font-mono">{m.mae}</span>
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">MAE</span>
+                  <span className="text-base font-black text-blue-600 dark:text-blue-400 font-mono">{m.mae}</span>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
-                  <span className="text-[10px] text-slate-400 block font-semibold">RMSE</span>
-                  <span className="text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono">{m.rmse}</span>
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">RMSE</span>
+                  <span className="text-base font-black text-emerald-600 dark:text-emerald-400 font-mono">{m.rmse}</span>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-center">
-                  <span className="text-[10px] text-slate-400 block font-semibold">R² SCORE</span>
-                  <span className="text-base font-bold text-amber-600 dark:text-amber-400 font-mono">{m.r2}</span>
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 text-center shadow-sm">
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block font-bold">R² SCORE</span>
+                  <span className="text-base font-black text-amber-600 dark:text-amber-400 font-mono">{m.r2}</span>
                 </div>
               </div>
 
               {/* Training details */}
-              <div className="space-y-1.5 text-xs bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Training Window:</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-mono">{m.trainingPeriod}</span>
+              <div className="space-y-1.5 text-xs bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="flex justify-between font-medium">
+                  <span className="text-slate-500 dark:text-slate-400">Training Window:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-mono font-bold">{m.trainingPeriod}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Dataset Records:</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-mono">{m.datasetRecordCount.toLocaleString()} pts</span>
+                <div className="flex justify-between font-medium">
+                  <span className="text-slate-500 dark:text-slate-400">Dataset Records:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-mono font-bold">{m.datasetRecordCount.toLocaleString()} pts</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Model Version:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">{m.version}</span>
+                <div className="flex justify-between font-medium">
+                  <span className="text-slate-500 dark:text-slate-400">Model Version:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-black font-mono">{m.version}</span>
                 </div>
               </div>
             </div>

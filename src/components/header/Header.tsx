@@ -8,7 +8,6 @@ import {
   AlertTriangle,
   Layers,
   HelpCircle,
-  UserCheck,
   Microscope,
   Sun,
   Moon,
@@ -71,16 +70,17 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   const secondaryTabs = [
-    { id: 'dashboard', label: 'Home & Map View', icon: Compass },
-    { id: 'routes', label: 'Voyage Planning', icon: BarChart2 },
-    { id: 'forecasts', label: '72h Forecasts', icon: CloudSnow },
-    { id: 'icebergs', label: 'Iceberg Tracker', icon: Film, badge: 'NASA' },
-    { id: 'explainable-ai', label: 'Explainable AI', icon: Shield },
-    { id: 'metrics', label: 'AI Validation', icon: Radio },
-    { id: 'datasources', label: 'Data Feeds', icon: Database },
-    { id: 'vessel', label: 'Vessel Profile', icon: Ship },
+    { id: 'dashboard', label: 'Home & Map', icon: Compass, researcherOnly: false },
+    { id: 'routes', label: 'Voyage Planning', icon: BarChart2, researcherOnly: false },
+    { id: 'forecasts', label: '72h Forecasts', icon: CloudSnow, researcherOnly: false },
+    { id: 'icebergs', label: 'Iceberg Tracker', icon: Film, badge: 'NASA', researcherOnly: true },
+    { id: 'explainable-ai', label: 'Explainable AI', icon: Shield, researcherOnly: true },
+    { id: 'metrics', label: 'AI Validation', icon: Radio, researcherOnly: true },
+    { id: 'datasources', label: 'Data Feeds', icon: Database, researcherOnly: true },
+    { id: 'vessel', label: 'Vessel Profile', icon: Ship, researcherOnly: false },
   ];
 
+  const visibleTabs = secondaryTabs.filter(tab => userRole === 'researcher' || !tab.researcherOnly);
   const isLight = theme === 'light';
 
   return (
@@ -88,100 +88,109 @@ export const Header: React.FC<HeaderProps> = ({
       id="console-header"
       className={`${
         isLight
-          ? 'bg-white border-b border-slate-200 text-slate-800'
-          : 'bg-[#0B132B] border-b border-slate-800 text-slate-100'
-      } flex flex-col z-30 select-none font-sans sticky top-0 shadow-sm`}
+          ? 'bg-white border-b border-slate-200 text-slate-900 shadow-sm'
+          : 'bg-[#091122] border-b border-slate-800 text-slate-100 shadow-md'
+      } flex flex-col z-30 select-none font-sans sticky top-0`}
     >
-      {/* Primary Top Bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 gap-4">
-        {/* Left: Branding + Global Search */}
-        <div className="flex items-center gap-4 flex-1 max-w-2xl">
-          <div className="flex items-center gap-2.5 flex-shrink-0 cursor-pointer" onClick={() => onSelectTab('dashboard')}>
-            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20">
-              <Compass className="w-5 h-5 animate-spin-slow" />
+      {/* Primary Top Bar — 3 zone flex layout */}
+      <div className="flex items-center gap-2 px-3 py-2 min-w-0">
+
+        {/* LEFT: Logo & Branding — fixed narrow zone, never overlaps center */}
+        <div className="flex items-center gap-2 flex-shrink-0 min-w-0" style={{ maxWidth: '200px' }}>
+          <div
+            className="flex items-center gap-2 cursor-pointer min-w-0"
+            onClick={() => onSelectTab('dashboard')}
+            title="POLARIS DSS — Antarctic Decision Support System"
+          >
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-blue-700 via-blue-600 to-sky-400 flex items-center justify-center text-white shadow-md shadow-blue-500/30 flex-shrink-0 border border-blue-400/30">
+              <Compass className="w-4 h-4" />
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm font-extrabold tracking-wider text-slate-900 dark:text-white uppercase">
-                  POLARIS <span className="text-blue-600 dark:text-blue-400">DSS</span>
-                </span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
-                  MoES / NCPOR
-                </span>
+            <div className="flex flex-col leading-none min-w-0">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <h1 className="text-sm font-black tracking-wider uppercase text-slate-900 dark:text-white leading-none whitespace-nowrap">
+                  <span className="text-blue-600 dark:text-blue-400">POLARIS</span>
+                  {' '}
+                  <span className="px-1 py-0.5 rounded bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-black text-[10px] shadow-sm">
+                    DSS
+                  </span>
+                </h1>
               </div>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-none mt-0.5">
-                Antarctic Iceberg & Sea-Ice Navigation System
+              <p className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold mt-0.5 whitespace-nowrap hidden sm:block">
+                MoES / NCPOR
               </p>
             </div>
           </div>
+        </div>
 
+        {/* Vertical divider */}
+        <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700 flex-shrink-0" />
+
+        {/* CENTER: Search + Status — takes remaining space, min-w-0 prevents overflow */}
+        <div className="flex-1 min-w-0 flex items-center gap-2">
           {/* Quick Search */}
-          <div className="relative flex-1 hidden md:block max-w-xs ml-2">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+          <div className="relative hidden md:block w-44 xl:w-52 flex-shrink-0">
+            <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search waypoints, icebergs, vessel data..."
-              className={`w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border transition outline-none ${
+              placeholder="Search waypoints, bergs..."
+              className={`w-full pl-7 pr-2 py-1.5 text-xs rounded-lg border transition outline-none font-medium ${
                 isLight
-                  ? 'bg-slate-50 border-slate-200 focus:bg-white focus:border-blue-500 text-slate-800 placeholder-slate-400'
-                  : 'bg-slate-900 border-slate-700 focus:border-blue-400 text-slate-200 placeholder-slate-500'
+                  ? 'bg-slate-100 border-slate-300 focus:bg-white focus:border-blue-500 text-slate-900 placeholder-slate-400'
+                  : 'bg-slate-900 border-slate-700 focus:border-blue-400 text-slate-100 placeholder-slate-500'
               }`}
             />
           </div>
-        </div>
 
-        {/* Center / Status info */}
-        <div className="hidden lg:flex items-center gap-4 text-xs font-medium">
-          {/* Live Status Pill */}
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="font-semibold text-[11px]">LIVE DATA STREAM</span>
+          {/* Live Data Stream Indicator */}
+          <div className="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 flex-shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+            <span className="font-black text-[10px] tracking-wide whitespace-nowrap">LIVE DATA</span>
           </div>
 
           {/* UTC Clock */}
-          <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-mono text-[11px] bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md">
-            <Clock className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span>{utcTime || '05 SEP 2026 01:38:00 UTC'}</span>
+          <div className={`hidden xl:flex items-center gap-1 text-slate-800 dark:text-slate-200 font-mono text-[10px] px-2 py-1.5 rounded-lg border whitespace-nowrap font-bold flex-shrink-0 ${
+            isLight ? 'bg-slate-100 border-slate-300' : 'bg-slate-800 border-slate-700'
+          }`}>
+            <Clock className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+            <span>{utcTime || '--'}</span>
           </div>
         </div>
 
-        {/* Right Controls & User Info */}
-        <div className="flex items-center gap-2">
-          {/* Active Alerts Pill */}
+        {/* RIGHT: Controls — flex-shrink-0, no wrapping */}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {/* Active Alerts */}
           {activeAlertCount > 0 && (
-            <div className="flex items-center gap-1 px-2 py-1 bg-amber-500 text-white font-bold text-xs rounded-md shadow-sm animate-pulse">
+            <div className="flex items-center gap-1 px-2 py-1 bg-amber-500 text-white font-black text-xs rounded-lg shadow animate-pulse whitespace-nowrap">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>{activeAlertCount}</span>
+              <span className="hidden sm:inline">ALERTS</span>
             </div>
           )}
 
           {/* Drift Surge Simulation */}
           <button
             onClick={onTriggerSimulationEvent}
-            title="Simulate sudden iceberg drift surge"
-            className="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm transition active:scale-95"
+            title="Simulate sudden iceberg drift surge hazard"
+            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg transition active:scale-95 flex items-center gap-1"
           >
             <Activity className="w-3.5 h-3.5 animate-pulse" />
-            <span className="hidden xl:inline">Drift Surge</span>
+            <span className="hidden xl:inline text-xs font-bold">Surge</span>
           </button>
 
           {/* Map Layer Switcher */}
           <button
             onClick={onToggleMapProvider}
-            title="Toggle Polar / Satellite map view"
-            className={`p-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition ${
+            title="Toggle Polar Vector / Satellite map"
+            className={`p-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 transition whitespace-nowrap ${
               isLight
-                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800'
                 : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
             }`}
           >
             <Layers className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
-            <span className="hidden sm:inline">
+            <span className="hidden lg:inline">
               {mapProvider === 'antarctic-polar' ? 'Polar' : 'Satellite'}
             </span>
           </button>
@@ -189,17 +198,17 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Role Switcher */}
           <button
             onClick={onToggleRole}
-            title={`Current Role: ${userRole}. Click to toggle.`}
-            className={`px-2.5 py-1.5 rounded-lg border text-xs font-semibold flex items-center gap-1.5 transition ${
+            title={`View: ${userRole === 'navigator' ? 'Ship Captain / Bridge' : 'Polar Researcher'}. Click to toggle.`}
+            className={`px-2.5 py-1.5 rounded-lg border text-xs font-black flex items-center gap-1.5 shadow transition active:scale-95 whitespace-nowrap ${
               userRole === 'navigator'
-                ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800'
-                : 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800'
+                ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-emerald-500'
+                : 'bg-purple-600 hover:bg-purple-700 text-white border-purple-500'
             }`}
           >
             {userRole === 'navigator' ? (
               <>
-                <UserCheck className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Navigator</span>
+                <Ship className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Captain</span>
               </>
             ) : (
               <>
@@ -212,22 +221,22 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Theme Toggle */}
           <button
             onClick={onToggleTheme}
-            title="Toggle Theme"
+            title="Toggle Light/Dark Theme"
             className={`p-1.5 rounded-lg border transition ${
               isLight
-                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800'
                 : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
             }`}
           >
             {isLight ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-blue-400" />}
           </button>
 
-          {/* Help / Guide button */}
+          {/* Help */}
           <button
             onClick={() => setIsGuideOpen(true)}
             className={`p-1.5 rounded-lg border transition ${
               isLight
-                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700'
+                ? 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-800'
                 : 'bg-slate-800 hover:bg-slate-700 border-slate-700 text-slate-200'
             }`}
             title="System User Guide"
@@ -236,42 +245,46 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* User Badge */}
-          <div className="flex items-center gap-2 pl-2 border-l border-slate-200 dark:border-slate-800">
-            <div className="w-7 h-7 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-200 font-bold text-xs">
-              <User className="w-4 h-4" />
+          <div className="flex items-center gap-1.5 pl-1.5 border-l border-slate-200 dark:border-slate-700">
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 ${
+              userRole === 'navigator' ? 'bg-emerald-600 text-white' : 'bg-purple-600 text-white'
+            }`}>
+              <User className="w-3.5 h-3.5" />
             </div>
-            <div className="hidden xl:block">
-              <p className="text-xs font-bold leading-none text-slate-800 dark:text-slate-200">Team Catalyst</p>
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 capitalize">{userRole}</p>
+            <div className="hidden xl:block leading-tight">
+              <p className="text-xs font-black text-slate-900 dark:text-slate-100 whitespace-nowrap">Team Catalyst</p>
+              <p className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold capitalize whitespace-nowrap">
+                {userRole === 'navigator' ? 'Bridge Officer' : 'Chief Scientist'}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Secondary Horizontal Nav Ribbon */}
-      <nav className={`flex items-center overflow-x-auto px-4 py-1 gap-1 border-t scrollbar-none ${
-        isLight ? 'bg-slate-50 border-slate-200' : 'bg-slate-900 border-slate-800'
+      <nav className={`flex items-center overflow-x-auto px-3 py-1 gap-1 border-t scrollbar-none ${
+        isLight ? 'bg-slate-50 border-slate-200' : 'bg-[#070D18] border-slate-800'
       }`}>
-        {secondaryTabs.map((tab) => {
+        {visibleTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => onSelectTab(tab.id)}
-              className={`px-3 py-1.5 rounded-md text-xs font-medium transition flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                  ? 'bg-blue-600 text-white shadow font-bold'
                   : isLight
-                  ? 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+                  ? 'text-slate-600 hover:bg-blue-50 hover:text-blue-700'
+                  : 'text-slate-400 hover:bg-slate-800 hover:text-white'
               }`}
             >
               <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-400'}`} />
               <span>{tab.label}</span>
               {tab.badge && (
-                <span className={`text-[9px] px-1 py-0.2 rounded font-bold ${
-                  isActive ? 'bg-blue-700 text-white' : 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300'
+                <span className={`text-[9px] px-1.5 rounded font-black ${
+                  isActive ? 'bg-blue-800 text-white' : 'bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300'
                 }`}>
                   {tab.badge}
                 </span>
@@ -281,7 +294,6 @@ export const Header: React.FC<HeaderProps> = ({
         })}
       </nav>
 
-      {/* User Guide Modal */}
       <UserGuideModal isOpen={isGuideOpen} onClose={() => setIsGuideOpen(false)} />
     </header>
   );

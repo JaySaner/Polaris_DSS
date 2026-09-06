@@ -107,26 +107,26 @@ export const IcebergTrackerPage: React.FC<IcebergTrackerPageProps> = ({
 
       {/* Easy-to-Understand Step-by-Step UI/UX Guide */}
       {showHelpGuide && (
-        <div className="bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-800 p-3.5 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs shadow-sm">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3.5 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs shadow-sm">
           <div className="flex items-start gap-3">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 mt-0.5">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400 mt-0.5 border border-blue-100 dark:border-blue-800">
               <Sparkles className="w-4 h-4" />
             </div>
             <div>
-              <span className="font-bold text-slate-800 dark:text-slate-200 block text-xs">
+              <span className="font-extrabold text-slate-900 dark:text-slate-100 block text-xs">
                 How Antarctic Iceberg Tracking Works:
               </span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1.5 text-slate-600 dark:text-slate-300 text-[11px]">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1.5 text-slate-600 dark:text-slate-300 text-[11px] font-medium">
                 <div className="flex items-start gap-1.5">
-                  <span className="font-bold text-blue-600 dark:text-blue-400">1. Satellite SAR:</span>
+                  <span className="font-extrabold text-blue-600 dark:text-blue-400">1. Satellite SAR:</span>
                   <span>Spaceborne radar penetrates polar cloud cover to measure iceberg perimeter & area.</span>
                 </div>
                 <div className="flex items-start gap-1.5">
-                  <span className="font-bold text-blue-600 dark:text-blue-400">2. Scatterometer Motion:</span>
+                  <span className="font-extrabold text-blue-600 dark:text-blue-400">2. Scatterometer Motion:</span>
                   <span>NASA BYU SCP records multi-month animations of iceberg drift patterns.</span>
                 </div>
                 <div className="flex items-start gap-1.5">
-                  <span className="font-bold text-blue-600 dark:text-blue-400">3. Vessel Proximity:</span>
+                  <span className="font-extrabold text-blue-600 dark:text-blue-400">3. Vessel Proximity:</span>
                   <span>Our AI model projects +72h drift vectors to keep vessel routes clear of collisions.</span>
                 </div>
               </div>
@@ -134,7 +134,7 @@ export const IcebergTrackerPage: React.FC<IcebergTrackerPageProps> = ({
           </div>
           <button
             onClick={() => setShowHelpGuide(false)}
-            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-[11px] underline flex-shrink-0"
+            className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-[11px] font-bold underline flex-shrink-0"
           >
             Hide Guide
           </button>
@@ -144,39 +144,39 @@ export const IcebergTrackerPage: React.FC<IcebergTrackerPageProps> = ({
       {/* 4 Summary Stat Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
         <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold block">Tracked Icebergs</span>
+          <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">Tracked Icebergs</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-bold text-slate-900 dark:text-white font-mono">{icebergs.length}</span>
-            <span className="text-[10px] text-blue-600 dark:text-blue-400">Major Bergs</span>
+            <span className="text-xl font-black text-slate-900 dark:text-white font-mono">{icebergs.length}</span>
+            <span className="text-[10px] text-blue-600 dark:text-blue-400 font-bold">Major Bergs</span>
           </div>
           <span className="text-[10px] text-slate-400 block mt-0.5">Quadrants A, B, C, D</span>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold block">Total Ice Surface Area</span>
+          <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">Total Ice Surface Area</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-bold text-blue-600 dark:text-blue-400 font-mono">{Math.round(totalArea).toLocaleString()}</span>
-            <span className="text-[10px] text-slate-400">km²</span>
+            <span className="text-xl font-black text-blue-600 dark:text-blue-400 font-mono">{Math.round(totalArea).toLocaleString()}</span>
+            <span className="text-[10px] text-slate-400 font-bold">km²</span>
           </div>
           <span className="text-[10px] text-slate-400 block mt-0.5">A23A is largest (1,428 km²)</span>
         </div>
 
         <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold block">Average Drift Speed</span>
+          <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">Average Drift Speed</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">{avgSpeed}</span>
-            <span className="text-[10px] text-slate-400">knots</span>
+            <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono">{avgSpeed}</span>
+            <span className="text-[10px] text-slate-400 font-bold">knots</span>
           </div>
           <span className="text-[10px] text-slate-400 block mt-0.5">Driven by Circumpolar Current</span>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-rose-200 dark:border-rose-900 shadow-sm">
-          <span className="text-slate-500 text-[10px] uppercase font-semibold block">High/Extreme Hazard Bergs</span>
+        <div className="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+          <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">High/Extreme Hazard Bergs</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-xl font-bold text-rose-600 dark:text-rose-400 font-mono">{highRiskCount}</span>
-            <span className="text-[10px] text-slate-400">monitored</span>
+            <span className="text-xl font-black text-rose-600 dark:text-rose-400 font-mono">{highRiskCount}</span>
+            <span className="text-[10px] text-slate-400 font-bold">monitored</span>
           </div>
-          <span className="text-[10px] text-rose-500 block mt-0.5">Active CPA warnings</span>
+          <span className="text-[10px] text-rose-500 font-bold block mt-0.5">Active CPA warnings</span>
         </div>
       </div>
 

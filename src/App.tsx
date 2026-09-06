@@ -41,6 +41,18 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mapProvider, setMapProvider] = useState<'antarctic-polar' | 'google-maps-satellite'>('antarctic-polar');
 
+  // Sync theme with HTML document element for proper Tailwind dark: styling
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+      root.classList.remove('light');
+    } else {
+      root.classList.add('light');
+      root.classList.remove('dark');
+    }
+  }, [theme]);
+
   // Vessel Profile State
   const [vessel, setVessel] = useState<VesselProfile>(DEFAULT_VESSEL_PROFILE);
 
@@ -61,16 +73,19 @@ export default function App() {
   const [objective, setObjective] = useState<RoutingObjective>('Safety First');
   const [selectedHorizon, setSelectedHorizon] = useState<number>(0);
 
-  // Layer Visibility
+  // Tracks whether the user has explicitly chosen a destination (controls map route display)
+  const [destinationSet, setDestinationSet] = useState<boolean>(false);
+
+  // Layer Visibility — Default to Tactical View (clean map for Captain)
   const [layers, setLayers] = useState<MapLayerVisibility>({
     seaIce: true,
-    predictedSeaIce: true,
+    predictedSeaIce: false,
     icebergs: true,
-    predictedIcebergTrajectories: true,
-    uncertaintyCones: true,
-    navigationRiskGrid: true,
-    windVectors: true,
-    oceanCurrents: true,
+    predictedIcebergTrajectories: false,
+    uncertaintyCones: false,
+    navigationRiskGrid: false,
+    windVectors: false,
+    oceanCurrents: false,
     researchStations: true,
     vessel: true,
     recommendedRoute: true,
@@ -143,6 +158,28 @@ export default function App() {
     setVessel(updated);
   }, []);
 
+  const handleSelectDestination = useCallback((name: string, coords: GeoCoordinate) => {
+    setDestination({ name, coords });
+    setDestinationSet(true);
+    const newRoutes = routeOptimizer.planRoutes(startLocation.coords, coords, vessel, objective, icebergs);
+    const rec = newRoutes.find((r) => r.isRecommended) || newRoutes[0];
+    if (rec) setSelectedRouteId(rec.id);
+  }, [startLocation, vessel, objective, icebergs]);
+
+  const handleSelectStartLocation = useCallback((name: string, coords: GeoCoordinate) => {
+    setStartLocation({ name, coords });
+    const newRoutes = routeOptimizer.planRoutes(coords, destination.coords, vessel, objective, icebergs);
+    const rec = newRoutes.find((r) => r.isRecommended) || newRoutes[0];
+    if (rec) setSelectedRouteId(rec.id);
+  }, [destination, vessel, objective, icebergs]);
+
+  const handleChangeObjective = useCallback((obj: RoutingObjective) => {
+    setObjective(obj);
+    const newRoutes = routeOptimizer.planRoutes(startLocation.coords, destination.coords, vessel, obj, icebergs);
+    const rec = newRoutes.find((r) => r.isRecommended) || newRoutes[0];
+    if (rec) setSelectedRouteId(rec.id);
+  }, [startLocation, destination, vessel, icebergs]);
+
   // Recalculate routes manually
   const handleRecalculateRoutes = useCallback(() => {
     setAlerts(alertService.getAlerts());
@@ -196,12 +233,22 @@ export default function App() {
     });
   }, [startLocation]);
 
+  // If user role changes to navigator while on a researcher-only tab, switch back to dashboard
+  useEffect(() => {
+    if (userRole === 'navigator') {
+      const researcherOnly = ['icebergs', 'explainable-ai', 'metrics', 'datasources'];
+      if (researcherOnly.includes(activeTab)) {
+        setActiveTab('dashboard');
+      }
+    }
+  }, [userRole, activeTab]);
+
   const activeAlertCount = alerts.filter((a) => !a.acknowledged && (a.type === 'CRITICAL' || a.type === 'WARNING')).length;
 
   return (
     <div
       id="antarctic-dss-application"
-      className={`flex flex-col w-full h-screen ${theme === 'light' ? 'theme-light bg-slate-50' : 'theme-dark bg-slate-950'} select-none overflow-hidden font-sans`}
+      className={`flex flex-col w-full h-screen ${theme === 'light' ? 'theme-light bg-slate-50 text-slate-900' : 'theme-dark dark bg-slate-950 text-slate-100'} select-none overflow-hidden font-sans`}
     >
       {/* 1. Header Bar */}
       <Header
@@ -226,28 +273,31 @@ export default function App() {
           activeTab={activeTab}
           onSelectTab={(tab) => setActiveTab(tab)}
           userRole={userRole}
+          onToggleRole={() => setUserRole((r) => (r === 'navigator' ? 'researcher' : 'navigator'))}
         />
 
         {/* Main View Container */}
         <main id="main-view-container" className="flex-1 flex flex-col overflow-hidden relative bg-slate-50 dark:bg-slate-950">
           {activeTab === 'dashboard' && (
             <HomeDashboard
+              userRole={userRole}
               layers={layers}
               onToggleLayer={handleToggleLayer}
               vessel={vessel}
               icebergs={icebergs}
-              activeRoute={activeRoute}
-              allRoutes={candidateRoutes}
+              activeRoute={destinationSet ? activeRoute : null}
+              allRoutes={destinationSet ? candidateRoutes : []}
+              onSelectRoute={(id) => setSelectedRouteId(id)}
               seaIceGrid={seaIceGrid}
               riskGrid={riskGrid}
               selectedHorizon={selectedHorizon}
               onChangeHorizon={setSelectedHorizon}
               startLocation={startLocation}
               destination={destination}
-              onSelectStartLocation={(name, coords) => setStartLocation({ name, coords })}
-              onSelectDestination={(name, coords) => setDestination({ name, coords })}
+              onSelectStartLocation={handleSelectStartLocation}
+              onSelectDestination={handleSelectDestination}
               objective={objective}
-              onChangeObjective={setObjective}
+              onChangeObjective={handleChangeObjective}
               onRecalculateRoutes={handleRecalculateRoutes}
               alerts={alerts}
               onAcknowledgeAlert={handleAcknowledgeAlert}
@@ -256,6 +306,7 @@ export default function App() {
               onNavigateToTab={(tab) => setActiveTab(tab)}
               recalculationBanner={recalculationBanner}
               onDismissRecalculationBanner={() => setRecalculationBanner(null)}
+              destinationSet={destinationSet}
             />
           )}
 

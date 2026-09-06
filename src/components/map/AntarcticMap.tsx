@@ -30,6 +30,7 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
+  Minimize2,
   AlertTriangle,
   Info,
   Shield,
@@ -60,6 +61,7 @@ interface AntarcticMapProps {
   onSelectSeaIcePoint: (point: SeaIceGridPoint) => void;
   onSelectWaypoint: (waypoint: RouteWaypoint) => void;
   mapProviderType: 'antarctic-polar' | 'google-maps-satellite';
+  onToggleMapProvider?: () => void;
 }
 
 export const AntarcticMap: React.FC<AntarcticMapProps> = ({
@@ -77,6 +79,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   onSelectSeaIcePoint,
   onSelectWaypoint,
   mapProviderType,
+  onToggleMapProvider,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -89,6 +92,45 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   const [hoveredItem, setHoveredItem] = useState<{ title: string; subtitle: string; x: number; y: number } | null>(null);
   const [dimensions, setDimensions] = useState<{ width: number; height: number }>({ width: 800, height: 600 });
   const [showLegend, setShowLegend] = useState<boolean>(true);
+  const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
+
+  // Fullscreen API toggle
+  const handleToggleFullscreen = () => {
+    const elem = containerRef.current;
+    if (!elem) return;
+
+    if (!document.fullscreenElement) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if ((elem as any).webkitRequestFullscreen) {
+        (elem as any).webkitRequestFullscreen();
+      } else if ((elem as any).msRequestFullscreen) {
+        (elem as any).msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if ((document as any).webkitExitFullscreen) {
+        (document as any).webkitExitFullscreen();
+      } else if ((document as any).msExitFullscreen) {
+        (document as any).msExitFullscreen();
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    document.addEventListener('webkitfullscreenchange', handleFsChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFsChange);
+      document.removeEventListener('webkitfullscreenchange', handleFsChange);
+    };
+  }, []);
+
+  const hasAutoFitted = useRef<boolean>(false);
 
   // Resize observer for responsive canvas
   useEffect(() => {
@@ -104,6 +146,31 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, []);
+
+  // Auto-focus on active voyage corridor on initial load
+  useEffect(() => {
+    if (dimensions.width > 300 && !hasAutoFitted.current && activeRoute) {
+      hasAutoFitted.current = true;
+      if (activeRoute.waypoints.length > 0) {
+        const lats = [vessel.currentPosition.lat, ...activeRoute.waypoints.map((w) => w.lat)];
+        const lons = [vessel.currentPosition.lon, ...activeRoute.waypoints.map((w) => w.lon)];
+        const avgLat = lats.reduce((a, b) => a + b, 0) / lats.length;
+        const avgLon = lons.reduce((a, b) => a + b, 0) / lons.length;
+        const p = projectSouthPolarStereographic(
+          { lat: avgLat, lon: avgLon },
+          dimensions.width / 2,
+          dimensions.height / 2,
+          Math.min(dimensions.width, dimensions.height) * 0.44,
+          -50.0
+        );
+        setPan({
+          x: dimensions.width / 2 - p.x,
+          y: dimensions.height / 2 - p.y,
+        });
+        setZoom(1.8);
+      }
+    }
+  }, [dimensions, activeRoute, vessel]);
 
   const centerX = dimensions.width / 2 + pan.x;
   const centerY = dimensions.height / 2 + pan.y;
@@ -237,7 +304,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
   // Helper: Draw Graticule
   const drawGraticule = (ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number) => {
     ctx.save();
-    ctx.strokeStyle = 'rgba(56, 189, 248, 0.12)';
+    ctx.strokeStyle = 'rgba(56, 189, 248, 0.08)';
     ctx.lineWidth = 1;
     ctx.setLineDash([3, 4]);
 
@@ -248,23 +315,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       ctx.beginPath();
       ctx.arc(cx, cy, rad, 0, Math.PI * 2);
       ctx.stroke();
-
-      ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
-      ctx.font = '9px monospace';
-      ctx.fillText(`${Math.abs(lat)}°S`, cx + rad + 4, cy - 2);
     });
 
-    for (let lon = 0; lon < 360; lon += 30) {
+    for (let lon = 0; lon < 360; lon += 45) {
       const proj = projectSouthPolarStereographic({ lat: -50, lon }, cx, cy, r, -50.0);
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(proj.x, proj.y);
       ctx.stroke();
-
-      ctx.fillStyle = 'rgba(148, 163, 184, 0.5)';
-      ctx.font = '8px monospace';
-      const label = lon === 0 ? '0° PM' : lon === 180 ? '180°' : lon > 180 ? `${360 - lon}°W` : `${lon}°E`;
-      ctx.fillText(label, proj.x + 3, proj.y - 3);
     }
     ctx.restore();
   };
@@ -275,8 +333,8 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     if (ANTARCTIC_COASTLINE_COORDS.length === 0) return;
 
     // Glowing ice shelf edge
-    ctx.shadowColor = 'rgba(56, 189, 248, 0.4)';
-    ctx.shadowBlur = 15;
+    ctx.shadowColor = 'rgba(56, 189, 248, 0.3)';
+    ctx.shadowBlur = 12;
 
     ctx.beginPath();
     ANTARCTIC_COASTLINE_COORDS.forEach((coord, idx) => {
@@ -307,12 +365,11 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     ctx.arc(cx, cy, r * 0.15, 0, Math.PI * 2);
     ctx.stroke();
 
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.6)';
-    ctx.font = 'bold 10px sans-serif';
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.4)';
+    ctx.font = 'bold 9px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText('EAST ANTARCTICA', cx + r * 0.25, cy + r * 0.1);
     ctx.fillText('WEST ANTARCTICA', cx - r * 0.25, cy - r * 0.1);
-    ctx.fillText('SOUTH POLE (90°S)', cx, cy + 14);
 
     // Center Crosshair
     ctx.strokeStyle = '#0284C7';
@@ -348,14 +405,14 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       else if (horizon === 48) conc = pt.forecast48h;
       else if (horizon === 72) conc = pt.forecast72h;
 
-      if (conc < 5) return;
+      // Filter out low concentration open water noise (< 25%)
+      if (conc < 25) return;
 
-      const size = Math.max(7, 13 * (r / 300));
+      const size = Math.max(6, 11 * (r / 300));
       let color = 'rgba(56, 189, 248, 0.15)';
-      if (conc > 80) color = 'rgba(255, 255, 255, 0.8)';
-      else if (conc > 60) color = 'rgba(186, 230, 253, 0.6)';
-      else if (conc > 35) color = 'rgba(56, 189, 248, 0.45)';
-      else if (conc > 15) color = 'rgba(14, 165, 233, 0.3)';
+      if (conc > 80) color = 'rgba(255, 255, 255, 0.75)';
+      else if (conc > 60) color = 'rgba(186, 230, 253, 0.5)';
+      else if (conc > 40) color = 'rgba(56, 189, 248, 0.3)';
 
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -365,7 +422,7 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     ctx.restore();
   };
 
-  // Helper: Draw Dynamic Risk Grid
+  // Helper: Draw Dynamic Risk Grid (Only draw actual hazard cells >= 40 risk)
   const drawRiskGrid = (
     ctx: CanvasRenderingContext2D,
     grid: RiskGridCell[],
@@ -376,11 +433,11 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     ctx.save();
     grid.forEach((cell) => {
       const p = projectSouthPolarStereographic(cell, cx, cy, r, -50.0);
-      if (!p.isVisible || cell.overallRisk < 15) return;
+      if (!p.isVisible || cell.overallRisk < 40) return;
 
       const size = Math.max(8, 14 * (r / 300));
-      let fillColor = 'rgba(34, 197, 94, 0.25)';
-      let strokeColor = 'rgba(34, 197, 94, 0.4)';
+      let fillColor = 'rgba(234, 179, 8, 0.25)';
+      let strokeColor = 'rgba(234, 179, 8, 0.5)';
 
       if (cell.riskCategory === 'EXTREME') {
         fillColor = 'rgba(239, 68, 68, 0.55)';
@@ -391,9 +448,6 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       } else if (cell.riskCategory === 'MODERATE') {
         fillColor = 'rgba(234, 179, 8, 0.35)';
         strokeColor = 'rgba(234, 179, 8, 0.65)';
-      } else if (cell.riskCategory === 'LOW') {
-        fillColor = 'rgba(56, 189, 248, 0.25)';
-        strokeColor = 'rgba(56, 189, 248, 0.5)';
       }
 
       ctx.fillStyle = fillColor;
@@ -462,10 +516,10 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
     const pts = route.waypoints.map((wp) => projectSouthPolarStereographic(wp, cx, cy, r, -50.0));
 
-    // Outer luminous glow for recommended route
+    // Outer luminous emerald glow for recommended route
     if (isRecommended) {
-      ctx.strokeStyle = 'rgba(56, 189, 248, 0.4)';
-      ctx.lineWidth = 9;
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.45)';
+      ctx.lineWidth = 10;
       ctx.beginPath();
       pts.forEach((p, idx) => {
         if (idx === 0) ctx.moveTo(p.x, p.y);
@@ -482,8 +536,8 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     });
 
     if (isRecommended) {
-      ctx.strokeStyle = '#38BDF8';
-      ctx.lineWidth = 3.5;
+      ctx.strokeStyle = '#10B981'; // Vibrant Emerald Green
+      ctx.lineWidth = 4.0;
       ctx.setLineDash([]);
     } else {
       ctx.strokeStyle = route.id.includes('direct') ? 'rgba(239, 68, 68, 0.75)' : 'rgba(234, 179, 8, 0.75)';
@@ -494,15 +548,19 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
 
     // Waypoint dots
     pts.forEach((p, idx) => {
-      ctx.fillStyle = isRecommended ? '#F8FAFC' : '#94A3B8';
+      ctx.fillStyle = isRecommended ? '#34D399' : '#94A3B8';
       ctx.beginPath();
-      ctx.arc(p.x, p.y, isRecommended ? 3.5 : 2.5, 0, Math.PI * 2);
+      ctx.arc(p.x, p.y, isRecommended ? 4 : 2.5, 0, Math.PI * 2);
       ctx.fill();
 
-      if (idx % 6 === 0 || idx === pts.length - 1) {
-        ctx.fillStyle = '#E2E8F0';
-        ctx.font = '8px monospace';
-        ctx.fillText(`WP${idx}`, p.x + 5, p.y - 4);
+      if (idx === 0) {
+        ctx.fillStyle = '#10B981';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText('ORIGIN', p.x + 6, p.y - 4);
+      } else if (idx === pts.length - 1) {
+        ctx.fillStyle = '#34D399';
+        ctx.font = 'bold 9px monospace';
+        ctx.fillText('DESTINATION', p.x + 6, p.y - 4);
       }
     });
 
@@ -980,14 +1038,29 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
         </button>
         <button
           id="btn-reset-map"
-          title="Reset South Polar Center"
+          title="Reset South Polar Center & Zoom"
           onClick={(e) => {
             e.stopPropagation();
             handleResetView();
           }}
           className="p-1.5 text-slate-300 hover:text-cyan-300 hover:bg-[#0B1E38] rounded-lg transition"
         >
-          <Maximize2 className="w-4 h-4" />
+          <Crosshair className="w-4 h-4 text-cyan-400" />
+        </button>
+        <button
+          id="btn-toggle-fullscreen"
+          title={isFullscreen ? 'Exit Fullscreen Map (Esc)' : 'Open Map in Fullscreen View'}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleToggleFullscreen();
+          }}
+          className={`p-1.5 rounded-lg transition ${
+            isFullscreen
+              ? 'text-cyan-300 bg-blue-600/40 border border-blue-400 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
+              : 'text-slate-300 hover:text-cyan-300 hover:bg-[#0B1E38]'
+          }`}
+        >
+          {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
         </button>
       </div>
 
@@ -1115,6 +1188,16 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
         >
           <span>🚢 Route</span>
         </button>
+        {onToggleMapProvider && (
+          <button
+            id="layer-toggle-satellite-mode"
+            onClick={onToggleMapProvider}
+            title="Switch between Polar Vector and Google Maps Satellite imagery"
+            className="px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 bg-blue-600/30 hover:bg-blue-600 text-blue-200 border border-blue-400/60 active:scale-95 shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+          >
+            <span>🛰️ Satellite View</span>
+          </button>
+        )}
       </div>
 
       {/* Hover Info Tooltip */}

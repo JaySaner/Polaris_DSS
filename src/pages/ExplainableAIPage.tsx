@@ -104,10 +104,10 @@ export const ExplainableAIPage: React.FC<ExplainableAIPageProps> = ({
 
           <div className="space-y-3.5 text-xs">
             {/* Sea Ice Weight */}
-            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700 space-y-1.5">
+            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-sm">
               <div className="flex justify-between items-center">
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">1. Sea-Ice Concentration & Thickness (w_ice)</span>
-                <span className="text-blue-600 dark:text-blue-400 font-bold font-mono text-sm">{(localWeights.seaIce * 100).toFixed(0)}%</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">1. Sea-Ice Concentration & Thickness (w_ice)</span>
+                <span className="text-blue-600 dark:text-blue-400 font-extrabold font-mono text-sm">{(localWeights.seaIce * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -118,16 +118,16 @@ export const ExplainableAIPage: React.FC<ExplainableAIPageProps> = ({
                 onChange={(e) => handleSliderChange('seaIce', parseFloat(e.target.value))}
                 className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
               />
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 Accounts for pack ice resistance, ridge jamming, and hull compressive load.
               </p>
             </div>
 
             {/* Iceberg Proximity Weight */}
-            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-rose-200 dark:border-rose-900 space-y-1.5">
+            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-sm">
               <div className="flex justify-between items-center">
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">2. Iceberg Proximity & Drift Velocity (w_berg)</span>
-                <span className="text-rose-600 dark:text-rose-400 font-bold font-mono text-sm">{(localWeights.iceberg * 100).toFixed(0)}%</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">2. Iceberg Proximity & Drift Velocity (w_berg)</span>
+                <span className="text-rose-600 dark:text-rose-400 font-extrabold font-mono text-sm">{(localWeights.iceberg * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -138,16 +138,16 @@ export const ExplainableAIPage: React.FC<ExplainableAIPageProps> = ({
                 onChange={(e) => handleSliderChange('iceberg', parseFloat(e.target.value))}
                 className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-rose-500"
               />
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 Evaluates collision potential, uncertainty ellipse overlap, and minimum CPA buffer.
               </p>
             </div>
 
             {/* Weather Weight */}
-            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-amber-200 dark:border-amber-900 space-y-1.5">
+            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-sm">
               <div className="flex justify-between items-center">
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">3. Meteorological Wind & Wave Energy (w_wx)</span>
-                <span className="text-amber-600 dark:text-amber-400 font-bold font-mono text-sm">{(localWeights.weather * 100).toFixed(0)}%</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">3. Meteorological Wind & Wave Energy (w_wx)</span>
+                <span className="text-amber-600 dark:text-amber-400 font-extrabold font-mono text-sm">{(localWeights.weather * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -158,16 +158,16 @@ export const ExplainableAIPage: React.FC<ExplainableAIPageProps> = ({
                 onChange={(e) => handleSliderChange('weather', parseFloat(e.target.value))}
                 className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
               />
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 10m wind speed, katabatic gale gusts, and significant wave height (SWH).
               </p>
             </div>
 
             {/* Ocean Current Weight */}
-            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-sky-200 dark:border-sky-900 space-y-1.5">
+            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-sm">
               <div className="flex justify-between items-center">
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">4. Ocean Currents & ACC Shear (w_ocean)</span>
-                <span className="text-sky-600 dark:text-sky-400 font-bold font-mono text-sm">{(localWeights.ocean * 100).toFixed(0)}%</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">4. Ocean Currents & ACC Shear (w_ocean)</span>
+                <span className="text-sky-600 dark:text-sky-400 font-extrabold font-mono text-sm">{(localWeights.ocean * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -178,16 +178,16 @@ export const ExplainableAIPage: React.FC<ExplainableAIPageProps> = ({
                 onChange={(e) => handleSliderChange('ocean', parseFloat(e.target.value))}
                 className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-sky-500"
               />
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 Antarctic Circumpolar Current velocity vectors and eddy turbulence.
               </p>
             </div>
 
             {/* Visibility Weight */}
-            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-purple-200 dark:border-purple-900 space-y-1.5">
+            <div className="bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 space-y-1.5 shadow-sm">
               <div className="flex justify-between items-center">
-                <span className="text-slate-800 dark:text-slate-200 font-semibold">5. Polar Visibility & Fog Impairment (w_vis)</span>
-                <span className="text-purple-600 dark:text-purple-400 font-bold font-mono text-sm">{(localWeights.visibility * 100).toFixed(0)}%</span>
+                <span className="text-slate-900 dark:text-slate-100 font-bold">5. Polar Visibility & Fog Impairment (w_vis)</span>
+                <span className="text-purple-600 dark:text-purple-400 font-extrabold font-mono text-sm">{(localWeights.visibility * 100).toFixed(0)}%</span>
               </div>
               <input
                 type="range"
@@ -198,7 +198,7 @@ export const ExplainableAIPage: React.FC<ExplainableAIPageProps> = ({
                 onChange={(e) => handleSliderChange('visibility', parseFloat(e.target.value))}
                 className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-purple-500"
               />
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium">
                 Visual iceberg sighting range and radar sea-clutter attenuation.
               </p>
             </div>

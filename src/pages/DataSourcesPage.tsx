@@ -101,30 +101,30 @@ export const DataSourcesPage: React.FC = () => {
               <div className="text-xs text-blue-600 dark:text-blue-400 font-semibold">{feed.agency}</div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400 block text-[10px]">Sensor Payload</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-semibold">{feed.sensor}</span>
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px] font-bold">Sensor Payload</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold">{feed.sensor}</span>
                 </div>
-                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700">
-                  <span className="text-slate-400 block text-[10px]">Resolution & Grid</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-semibold">{feed.resolution}</span>
-                </div>
-              </div>
-
-              <div className="space-y-1 text-xs bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Pass Cadence:</span>
-                  <span className="text-slate-800 dark:text-slate-200 font-mono">{feed.cadence}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Pipeline Ingestion Latency:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">{feed.latency}</span>
+                <div className="bg-slate-50 dark:bg-slate-800/40 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <span className="text-slate-500 dark:text-slate-400 block text-[10px] font-bold">Resolution & Grid</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-bold">{feed.resolution}</span>
                 </div>
               </div>
 
-              <div className="text-xs text-slate-500 bg-slate-50 dark:bg-slate-800/20 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
-                <span className="text-slate-700 dark:text-slate-300 font-semibold block text-[11px]">Primary Parameters:</span>
-                <span className="mt-0.5 block leading-relaxed">{feed.parameters}</span>
+              <div className="space-y-1 text-xs bg-slate-50 dark:bg-slate-800/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <div className="flex justify-between font-medium">
+                  <span className="text-slate-500 dark:text-slate-400">Pass Cadence:</span>
+                  <span className="text-slate-900 dark:text-slate-100 font-mono font-bold">{feed.cadence}</span>
+                </div>
+                <div className="flex justify-between font-medium">
+                  <span className="text-slate-500 dark:text-slate-400">Pipeline Ingestion Latency:</span>
+                  <span className="text-emerald-600 dark:text-emerald-400 font-black font-mono">{feed.latency}</span>
+                </div>
+              </div>
+
+              <div className="text-xs text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800/30 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                <span className="text-slate-900 dark:text-slate-100 font-bold block text-[11px]">Primary Parameters:</span>
+                <span className="mt-0.5 block leading-relaxed font-medium">{feed.parameters}</span>
               </div>
             </div>
 
