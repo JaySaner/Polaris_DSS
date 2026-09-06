@@ -56,31 +56,31 @@ export const DataSourcesPage: React.FC = () => {
   ];
 
   return (
-    <div id="data-sources-page" className="flex-1 bg-[#040914] text-slate-100 p-4 md:p-6 overflow-y-auto space-y-5">
+    <div id="data-sources-page" className="flex-1 bg-slate-50 text-slate-900 p-4 md:p-6 overflow-y-auto space-y-5">
       {/* Header Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-900/30 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-900/40 border border-cyan-400/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+          <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 shadow-sm">
             <Database className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-base font-bold text-slate-100 tracking-tight">
+              <h2 className="text-base font-bold text-slate-900 tracking-tight">
                 Polar Earth Observation & Sensor Ingestion Pipeline
               </h2>
-              <span className="text-[10px] bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-mono">
+              <span className="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-full font-mono">
                 Unified Scientific Data Feed
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Automated ingestion, spatial-temporal interpolation, and feature extraction pipeline
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-[#071326] border border-emerald-500/30 rounded-xl">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]" />
-          <span className="text-emerald-300 font-bold text-xs font-mono">ALL 5 FEEDS SYNCHRONIZED</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl shadow-sm">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-emerald-700 font-bold text-xs font-mono">ALL 5 FEEDS SYNCHRONIZED</span>
         </div>
       </div>
 
@@ -89,48 +89,48 @@ export const DataSourcesPage: React.FC = () => {
         {feeds.map((feed) => (
           <div
             key={feed.name}
-            className="bg-[#071326]/95 border border-cyan-500/20 p-4 rounded-2xl space-y-3 shadow-xl flex flex-col justify-between"
+            className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-sm flex flex-col justify-between"
           >
             <div className="space-y-2.5">
-              <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2">
-                <span className="font-bold text-slate-100 text-sm tracking-tight">{feed.name}</span>
-                <span className="text-[10px] bg-emerald-950 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded-full font-mono font-bold">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <span className="font-bold text-slate-900 text-sm tracking-tight">{feed.name}</span>
+                <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-mono font-bold">
                   {feed.status}
                 </span>
               </div>
-              <div className="text-xs text-cyan-400 font-semibold">{feed.agency}</div>
+              <div className="text-xs text-sky-600 font-semibold">{feed.agency}</div>
 
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-[#050D1A] p-2.5 rounded-xl border border-cyan-500/20">
-                  <span className="text-slate-400 block text-[10px]">Sensor Payload</span>
-                  <span className="text-slate-200 font-semibold">{feed.sensor}</span>
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <span className="text-slate-500 block text-[10px]">Sensor Payload</span>
+                  <span className="text-slate-900 font-semibold">{feed.sensor}</span>
                 </div>
-                <div className="bg-[#050D1A] p-2.5 rounded-xl border border-cyan-500/20">
-                  <span className="text-slate-400 block text-[10px]">Resolution & Grid</span>
-                  <span className="text-slate-200 font-semibold">{feed.resolution}</span>
-                </div>
-              </div>
-
-              <div className="space-y-1 text-xs bg-[#050D1A] p-3 rounded-xl border border-cyan-500/20">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Pass Cadence:</span>
-                  <span className="text-slate-200 font-mono">{feed.cadence}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Pipeline Ingestion Latency:</span>
-                  <span className="text-emerald-400 font-bold font-mono">{feed.latency}</span>
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200">
+                  <span className="text-slate-500 block text-[10px]">Resolution & Grid</span>
+                  <span className="text-slate-900 font-semibold">{feed.resolution}</span>
                 </div>
               </div>
 
-              <div className="text-xs text-slate-400 bg-[#050D1A]/80 p-2.5 rounded-xl border border-slate-800">
-                <span className="text-slate-300 font-semibold block text-[11px]">Primary Parameters:</span>
+              <div className="space-y-1 text-xs bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Pass Cadence:</span>
+                  <span className="text-slate-900 font-mono">{feed.cadence}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Pipeline Ingestion Latency:</span>
+                  <span className="text-emerald-700 font-bold font-mono">{feed.latency}</span>
+                </div>
+              </div>
+
+              <div className="text-xs text-slate-500 bg-white p-2.5 rounded-xl border border-slate-200">
+                <span className="text-slate-700 font-semibold block text-[11px]">Primary Parameters:</span>
                 <span className="mt-0.5 block leading-relaxed">{feed.parameters}</span>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-cyan-900/30 text-xs text-slate-500 flex items-center justify-between">
+            <div className="pt-2 border-t border-slate-200 text-xs text-slate-500 flex items-center justify-between">
               <span>Protocol: OGC WMS / NetCDF4 / GeoTIFF</span>
-              <span className="text-cyan-400 font-semibold">Live Streaming</span>
+              <span className="text-sky-600 font-semibold">Live Streaming</span>
             </div>
           </div>
         ))}

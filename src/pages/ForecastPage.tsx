@@ -84,23 +84,23 @@ export const ForecastPage: React.FC<ForecastPageProps> = ({
   }));
 
   return (
-    <div id="forecasts-page" className="flex-1 bg-[#040914] text-slate-100 p-4 md:p-6 overflow-y-auto space-y-5">
+    <div id="forecasts-page" className="flex-1 bg-slate-50 text-slate-900 p-4 md:p-6 overflow-y-auto space-y-5">
       {/* Header Banner */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-900/30 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-900/40 border border-cyan-400/40 text-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
+          <div className="p-2.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-600 shadow-sm">
             <CloudSnow className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h2 className="text-base font-bold text-slate-100 tracking-tight">
+              <h2 className="text-base font-bold text-slate-900 tracking-tight">
                 Polar AI/ML 72-Hour Forecasting Laboratory
               </h2>
-              <span className="text-[10px] bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-mono">
+              <span className="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-full font-mono">
                 XGBoost + Hydrodynamic Hybrid
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5">
               Antarctic sea-ice concentration & iceberg trajectory multi-horizon predictive modeling (+6h to +72h)
             </p>
           </div>
@@ -108,12 +108,12 @@ export const ForecastPage: React.FC<ForecastPageProps> = ({
 
         {/* Sector Quick Selector */}
         <div className="flex items-center gap-2">
-          <span className="text-slate-400 text-xs font-medium">Regional Sector:</span>
+          <span className="text-slate-500 text-xs font-medium">Regional Sector:</span>
           <select
             id="select-forecast-sector"
             value={selectedSector}
             onChange={(e) => setSelectedSector(e.target.value)}
-            className="bg-[#071326] border border-cyan-500/30 text-cyan-300 rounded-lg p-2 text-xs font-semibold focus:border-cyan-400 focus:outline-none transition shadow-sm"
+            className="bg-white border border-slate-300 text-slate-900 rounded-lg p-2 text-xs font-semibold focus:border-sky-500 focus:ring-1 focus:ring-sky-200 focus:outline-none transition shadow-sm"
           >
             {sectors.map((s) => (
               <option key={s.name} value={s.name}>
@@ -127,15 +127,15 @@ export const ForecastPage: React.FC<ForecastPageProps> = ({
       {/* Grid 1: Sea-Ice Predictive Concentration Curve & Feature Weights */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Main Forecast Chart */}
-        <div className="lg:col-span-2 bg-[#071326]/90 border border-cyan-500/20 p-4 rounded-xl space-y-3.5 shadow-xl">
-          <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2.5">
+        <div className="lg:col-span-2 bg-white border border-slate-200 p-4 rounded-xl space-y-3.5 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
             <div className="flex items-center gap-2">
-              <span className="font-semibold text-slate-100 text-xs uppercase tracking-wider">
+              <span className="font-semibold text-slate-900 text-xs uppercase tracking-wider">
                 Sea-Ice Concentration Multi-Horizon Forecast (%)
               </span>
-              <span className="text-[10px] text-cyan-400 font-mono">95% CI Confidence Band</span>
+              <span className="text-[10px] text-sky-600 font-mono">95% CI Confidence Band</span>
             </div>
-            <span className="text-emerald-400 text-xs font-mono font-semibold">R²: 0.914 | MAE: 4.82%</span>
+            <span className="text-emerald-700 text-xs font-mono font-semibold">R²: 0.914 | MAE: 4.82%</span>
           </div>
 
           <div className="h-68 w-full">
@@ -185,24 +185,24 @@ export const ForecastPage: React.FC<ForecastPageProps> = ({
         </div>
 
         {/* Feature Importance & Thermodynamics */}
-        <div className="bg-[#071326]/90 border border-cyan-500/20 p-4 rounded-xl space-y-4 flex flex-col justify-between shadow-xl">
+        <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-4 flex flex-col justify-between shadow-sm">
           <div>
-            <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2.5">
-              <span className="font-semibold text-slate-100 text-xs uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
+              <span className="font-semibold text-slate-900 text-xs uppercase tracking-wider">
                 XGBoost Feature Importance
               </span>
-              <span className="text-[10px] text-cyan-300 font-mono">SHAP Attributions</span>
+              <span className="text-[10px] text-sky-600 font-mono">SHAP Attributions</span>
             </div>
             <div className="space-y-2.5 mt-3.5 text-xs">
               {sectorForecast.featureImportance.map((f) => (
                 <div key={f.feature} className="space-y-1">
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-slate-300 truncate">{f.feature}</span>
-                    <span className="text-cyan-300 font-bold font-mono">{(f.importanceWeight * 100).toFixed(0)}%</span>
+                    <span className="text-slate-600 truncate">{f.feature}</span>
+                    <span className="text-sky-600 font-bold font-mono">{(f.importanceWeight * 100).toFixed(0)}%</span>
                   </div>
-                  <div className="w-full bg-[#050D1A] h-2 rounded-full overflow-hidden border border-slate-800">
+                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
                     <div
-                      className="bg-gradient-to-r from-cyan-500 to-blue-500 h-full rounded-full"
+                      className="bg-sky-600 h-full rounded-full"
                       style={{ width: `${f.importanceWeight * 100}%` }}
                     />
                   </div>
@@ -211,103 +211,105 @@ export const ForecastPage: React.FC<ForecastPageProps> = ({
             </div>
           </div>
 
-          <div className="bg-[#050D1A] p-3 rounded-lg border border-cyan-500/20 text-xs space-y-1.5">
-            <div className="text-slate-300 font-semibold uppercase text-[10px] text-cyan-400">Pack Ice Thermodynamics</div>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Est. Ice Thickness:</span>
-              <span className="text-cyan-300 font-bold font-mono">{sectorForecast.forecasts[2]?.iceThicknessEstimateM || 1.3} m</span>
+          <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs space-y-1.5">
+            <div className="text-slate-700 font-semibold uppercase text-[10px] text-sky-600">Pack Ice Thermodynamics</div>
+            <div className="flex justify-between text-slate-600">
+              <span className="text-slate-500">Est. Ice Thickness:</span>
+              <span className="text-sky-600 font-bold font-mono">{sectorForecast.forecasts[2]?.iceThicknessEstimateM || 1.3} m</span>
             </div>
-            <div className="flex justify-between text-slate-300">
-              <span className="text-slate-400">Pack Divergence Rate:</span>
-              <span className="text-emerald-400 font-bold font-mono">{sectorForecast.divergenceRateKmPerDay} km/day</span>
+            <div className="flex justify-between text-slate-600">
+              <span className="text-slate-500">Pack Divergence Rate:</span>
+              <span className="text-emerald-700 font-bold font-mono">{sectorForecast.divergenceRateKmPerDay} km/day</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Grid 2: Tracked Icebergs Catalog & Trajectory Predictions */}
-      <div className="bg-[#071326]/90 border border-cyan-500/20 p-4 rounded-xl space-y-3.5 shadow-xl">
-        <div className="flex items-center justify-between border-b border-cyan-900/30 pb-2.5">
+      <div className="bg-white border border-slate-200 p-4 rounded-xl space-y-3.5 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-slate-100 text-xs uppercase tracking-wider">
+            <span className="font-semibold text-slate-900 text-xs uppercase tracking-wider">
               Tracked Antarctic Iceberg Database & AI Drift Trajectories
             </span>
-            <span className="text-[10px] bg-[#050D1A] text-cyan-300 border border-cyan-500/30 px-2 py-0.5 rounded-full font-mono">
+            <span className="text-[10px] bg-sky-50 text-sky-700 border border-sky-200 px-2 py-0.5 rounded-full font-mono">
               US NIC / Sentinel-1 SAR Synchronized
             </span>
           </div>
-          <span className="text-xs text-slate-400">Total Active Targets: {icebergs.length}</span>
+          <span className="text-xs text-slate-500">Total Active Targets: {icebergs.length}</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
           {icebergForecastList.map(({ berg, forecast }) => (
             <div
               key={berg.id}
-              className="bg-gradient-to-b from-[#091A33] to-[#071428] border border-cyan-500/20 p-3.5 rounded-xl space-y-3 hover:border-cyan-400/50 transition-all flex flex-col justify-between shadow-md"
+              className="bg-white border border-slate-200 p-3.5 rounded-xl space-y-3 hover:border-sky-300 transition-all flex flex-col justify-between shadow-sm"
             >
               <div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🧊</span>
-                    <span className="font-bold text-slate-100 text-xs font-mono">{berg.name}</span>
+                    <span className="font-bold text-slate-900 text-xs font-mono">{berg.name}</span>
                   </div>
                   <span
                     className={`text-[10px] px-2.5 py-0.5 rounded-full font-bold border ${
                       berg.riskRating === 'EXTREME'
-                        ? 'bg-rose-950 text-rose-300 border-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.3)]'
+                        ? 'bg-red-50 text-red-700 border-red-200'
                         : berg.riskRating === 'HIGH'
-                        ? 'bg-amber-950 text-amber-300 border-amber-500'
-                        : 'bg-cyan-950 text-cyan-300 border-cyan-500'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                        : berg.riskRating === 'MEDIUM'
+                        ? 'bg-amber-50 text-amber-700 border-amber-200'
+                        : 'bg-emerald-50 text-emerald-700 border-emerald-200'
                     }`}
                   >
                     {berg.riskRating} RISK
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 mt-1">Calving Origin: {berg.calvingSource}</div>
+                <div className="text-[11px] text-slate-500 mt-1">Calving Origin: {berg.calvingSource}</div>
 
                 <div className="grid grid-cols-2 gap-2 mt-2.5 text-xs">
-                  <div className="bg-[#050D1A] p-2 rounded-lg border border-slate-800">
-                    <span className="text-slate-400 block text-[10px]">Dimensions</span>
-                    <span className="font-semibold text-slate-100 font-mono">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                    <span className="text-slate-500 block text-[10px]">Dimensions</span>
+                    <span className="font-semibold text-slate-900 font-mono">
                       {berg.lengthKm}x{berg.widthKm} km
                     </span>
                   </div>
-                  <div className="bg-[#050D1A] p-2 rounded-lg border border-slate-800">
-                    <span className="text-slate-400 block text-[10px]">Drift Velocity</span>
-                    <span className="font-semibold text-emerald-400 font-mono">
+                  <div className="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                    <span className="text-slate-500 block text-[10px]">Drift Velocity</span>
+                    <span className="font-semibold text-emerald-700 font-mono">
                       {berg.speedKnots} kts @ {berg.driftHeadingDeg}°
                     </span>
                   </div>
                 </div>
 
                 {/* Proximity & CPA */}
-                <div className="mt-2.5 text-[11px] space-y-1.5 bg-[#050D1A]/80 p-2.5 rounded-lg border border-cyan-500/20">
-                  <div className="flex justify-between text-slate-300">
-                    <span className="text-slate-400">Predicted +24h Fix:</span>
-                    <span className="font-mono text-cyan-300 font-semibold">
+                <div className="mt-2.5 text-[11px] space-y-1.5 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                  <div className="flex justify-between text-slate-600">
+                    <span className="text-slate-500">Predicted +24h Fix:</span>
+                    <span className="font-mono text-sky-600 font-semibold">
                       {forecast.trajectory[1]?.lat.toFixed(2)}°S, {forecast.trajectory[1]?.lon.toFixed(2)}°E
                     </span>
                   </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span className="text-slate-400">Route CPA Proximity:</span>
-                    <span className="font-mono font-bold text-amber-300">
+                  <div className="flex justify-between text-slate-600">
+                    <span className="text-slate-500">Route CPA Proximity:</span>
+                    <span className="font-mono font-bold text-amber-700">
                       {forecast.closestPointOfApproachNm !== undefined
                         ? `${forecast.closestPointOfApproachNm} NM`
                         : 'Clear (>50 NM)'}
                     </span>
                   </div>
-                  <div className="flex justify-between text-slate-300">
-                    <span className="text-slate-400">Uncertainty Cone:</span>
-                    <span className="text-slate-400 font-mono">±{forecast.trajectory[1]?.confidenceRadiusKm} km</span>
+                  <div className="flex justify-between text-slate-600">
+                    <span className="text-slate-500">Uncertainty Cone:</span>
+                    <span className="text-slate-500 font-mono">±{forecast.trajectory[1]?.confidenceRadiusKm} km</span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2.5 border-t border-cyan-900/30 text-xs">
+              <div className="flex items-center justify-between pt-2.5 border-t border-slate-200 text-xs">
                 <span className="text-slate-500 font-mono text-[10px]">{berg.dataSource}</span>
                 <button
                   onClick={() => onSimulateDriftSpike(berg.id)}
-                  className="px-2.5 py-1 bg-rose-950 hover:bg-rose-900 text-rose-200 border border-rose-500/60 rounded-lg font-semibold transition text-xs active:scale-95 shadow-sm"
+                  className="px-2.5 py-1 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-lg font-semibold transition text-xs active:scale-95 shadow-sm"
                 >
                   Simulate Surge (+0.8 kts)
                 </button>

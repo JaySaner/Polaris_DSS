@@ -118,13 +118,13 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => onNavigateToTab('routes')}
-              className="px-2.5 py-0.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold rounded text-[11px] transition"
+              className="px-2.5 py-0.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded text-[11px] transition"
             >
               Review Alternative
             </button>
             <button
               onClick={onDismissRecalculationBanner}
-              className="px-2 py-0.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] transition"
+              className="px-2 py-0.5 bg-white/90 hover:bg-white border border-white/70 text-slate-700 rounded text-[11px] transition"
             >
               Dismiss
             </button>
@@ -161,7 +161,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         <button
           id="btn-toggle-sidebar"
           onClick={() => setIsSidebarCollapsed((prev) => !prev)}
-          className="hidden md:flex absolute top-3 left-3 z-30 items-center justify-center p-2 rounded-xl bg-[#07152B]/90 hover:bg-[#0E2A54] border border-cyan-500/30 text-cyan-300 shadow-xl backdrop-blur-md transition active:scale-95"
+          className="hidden md:flex absolute top-3 left-3 z-30 items-center justify-center p-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-sky-600 shadow-md transition active:scale-95"
           style={{ left: isSidebarCollapsed ? '12px' : 'calc(20rem + 8px)' }}
           title={isSidebarCollapsed ? 'Expand Passage Planner Sidebar' : 'Collapse Sidebar for Full Map View'}
         >
@@ -173,29 +173,29 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
         </button>
 
         {/* Antarctic Map Area */}
-        <div className="flex-1 relative flex flex-col h-full bg-[#060B19] min-w-0 min-h-0">
+        <div className="flex-1 relative flex flex-col h-full bg-slate-50 min-w-0 min-h-0">
           {/* Floating Top Voyage Status Card on Map */}
           <div className="absolute top-3 right-3 left-14 md:left-4 z-20 pointer-events-none">
-            <div className="bg-[#071730]/90 border border-cyan-500/30 rounded-xl p-2.5 shadow-2xl backdrop-blur-md text-slate-100 flex flex-wrap items-center justify-between gap-3 pointer-events-auto max-w-4xl">
+            <div className="bg-white border border-slate-200 rounded-xl shadow-sm text-slate-900 flex flex-wrap items-center justify-between gap-4 pointer-events-auto max-w-4xl p-3">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300 flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 flex-shrink-0">
                   <Compass className="w-4 h-4 animate-spin-slow" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider">
+                    <span className="text-[10px] uppercase font-bold text-sky-600 tracking-wider">
                       ACTIVE PASSAGE CORRIDOR
                     </span>
                     {activeRoute?.isRecommended && (
-                      <span className="text-[9px] px-1.5 py-0.2 bg-emerald-950 text-emerald-300 border border-emerald-500/40 rounded font-semibold">
+                      <span className="text-[9px] px-1.5 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded font-semibold">
                         RECOMMENDED SAFE
                       </span>
                     )}
                   </div>
-                  <div className="text-xs font-bold text-slate-100 flex items-center gap-2">
+                  <div className="text-xs font-semibold text-slate-900 flex items-center gap-2">
                     <span>{startLocation.name.split('(')[0]}</span>
-                    <ArrowRight className="w-3 h-3 text-cyan-400" />
-                    <span className="text-cyan-300 font-extrabold">{destination.name}</span>
+                    <ArrowRight className="w-3 h-3 text-sky-600" />
+                    <span className="text-sky-600 font-bold">{destination.name}</span>
                   </div>
                 </div>
               </div>
@@ -203,20 +203,20 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               {activeRoute && (
                 <div className="flex items-center gap-4 text-xs font-mono">
                   <div className="hidden sm:block text-right">
-                    <span className="text-[10px] text-slate-400 block font-sans">Distance / ETA</span>
-                    <span className="font-bold text-cyan-200">
+                    <span className="text-[10px] text-slate-500 block font-sans">Distance / ETA</span>
+                    <span className="font-bold text-sky-600">
                       {activeRoute.totalDistanceNm} NM | {activeRoute.estimatedDurationHours} hrs
                     </span>
                   </div>
                   <div className="hidden sm:block text-right">
-                    <span className="text-[10px] text-slate-400 block font-sans">Safety Index</span>
+                    <span className="text-[10px] text-slate-500 block font-sans">Safety Index</span>
                     <span
                       className={`font-bold px-2 py-0.5 rounded text-[11px] ${
                         activeRoute.safetyIndex >= 80
-                          ? 'bg-emerald-950 text-emerald-300 border border-emerald-500/40'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           : activeRoute.safetyIndex >= 50
-                          ? 'bg-amber-950 text-amber-300 border border-amber-500/40'
-                          : 'bg-rose-950 text-rose-300 border border-rose-500/40'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : 'bg-red-50 text-red-700 border border-red-200'
                       }`}
                     >
                       {activeRoute.safetyIndex}/100
@@ -224,7 +224,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                   </div>
                   <button
                     onClick={() => onNavigateToTab('routes')}
-                    className="px-2.5 py-1.5 bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold rounded-lg transition text-xs flex items-center gap-1.5 shadow-md active:scale-95"
+                    className="px-2.5 py-1.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg transition text-xs flex items-center gap-1.5 shadow-sm active:scale-95"
                   >
                     <BarChart2 className="w-3.5 h-3.5" />
                     <span>Compare Routes</span>
@@ -237,15 +237,15 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           {/* Floating Bottom-Right Interactive Quick Legend */}
           <div className="absolute bottom-4 right-4 z-20">
             {showMapLegend ? (
-              <div className="bg-[#071730]/95 border border-cyan-500/30 rounded-xl p-3 shadow-2xl backdrop-blur-md text-slate-100 text-xs w-64 space-y-2">
-                <div className="flex items-center justify-between border-b border-cyan-900/40 pb-1.5">
-                  <span className="font-bold text-cyan-300 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                    <Info className="w-3.5 h-3.5 text-cyan-400" />
+              <div className="bg-white border border-slate-200 rounded-xl p-3 shadow-sm text-slate-900 text-xs w-64 space-y-2">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-1.5">
+                  <span className="font-bold text-sky-600 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                    <Info className="w-3.5 h-3.5 text-sky-600" />
                     Map Visual Legend
                   </span>
                   <button
                     onClick={() => setShowMapLegend(false)}
-                    className="text-[10px] text-slate-400 hover:text-slate-200"
+                    className="text-[10px] text-slate-500 hover:text-slate-900"
                   >
                     Hide
                   </button>
@@ -253,30 +253,30 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 <div className="space-y-1.5 text-[11px]">
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-1 bg-emerald-400 rounded-full shadow-[0_0_6px_#34d399]" />
-                    <span className="text-slate-200">Recommended Safe Corridor</span>
+                    <span className="text-slate-900">Recommended Safe Corridor</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-1 bg-amber-400 rounded-full" />
-                    <span className="text-slate-300">Alternative Direct Route</span>
+                    <span className="text-slate-500">Alternative Direct Route</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping" />
-                    <span className="text-slate-200">Vessel Position Fix</span>
+                    <span className="text-slate-900">Vessel Position Fix</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 border border-white" />
-                    <span className="text-slate-200">Iceberg Hazard & Trajectory</span>
+                    <span className="text-slate-900">Iceberg Hazard & Trajectory</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="w-3 h-2 bg-gradient-to-r from-sky-900 via-cyan-600 to-blue-950 rounded border border-cyan-500/30" />
-                    <span className="text-slate-300">Sea-Ice Density (0-100%)</span>
+                    <span className="text-slate-500">Sea-Ice Density (0-100%)</span>
                   </div>
                 </div>
               </div>
             ) : (
               <button
                 onClick={() => setShowMapLegend(true)}
-                className="px-2.5 py-1.5 bg-[#071730]/90 hover:bg-[#0E2A54] border border-cyan-500/30 text-cyan-300 rounded-lg shadow-xl backdrop-blur-md text-xs font-semibold flex items-center gap-1.5"
+                className="px-2.5 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-lg shadow-sm text-xs font-semibold flex items-center gap-1.5"
               >
                 <Info className="w-3.5 h-3.5" />
                 <span>Map Legend</span>

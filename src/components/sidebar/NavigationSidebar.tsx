@@ -103,7 +103,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       badge: 'RECOMMENDED',
       desc: 'Optimal fuel & risk trade-off',
       icon: Compass,
-      color: 'text-cyan-400',
+      color: 'text-sky-600',
     },
     {
       id: 'Fuel Efficiency',
@@ -208,28 +208,28 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
   return (
     <aside
       id="navigation-controls-sidebar"
-      className="w-full md:w-80 lg:w-88 flex-shrink-0 bg-[#071326]/95 border-r border-cyan-900/40 text-slate-100 flex flex-col h-full overflow-y-auto select-none p-3.5 space-y-3.5 shadow-xl scrollbar-thin scrollbar-thumb-cyan-900"
+      className="w-full md:w-80 lg:w-88 flex-shrink-0 bg-slate-50 border-r border-slate-200 text-slate-900 flex flex-col h-full overflow-y-auto select-none p-4 space-y-4 shadow-sm scrollbar-thin scrollbar-thumb-slate-300"
     >
       {/* Sidebar Header Title */}
-      <div className="flex items-center justify-between border-b border-cyan-900/50 pb-2">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-cyan-500/20 border border-cyan-400/40 flex items-center justify-center text-cyan-300">
+          <div className="w-7 h-7 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600">
             <Navigation className="w-3.5 h-3.5" />
           </div>
-          <span className="font-bold text-slate-100 text-xs tracking-wider uppercase font-sans">
+          <span className="font-bold text-slate-900 text-xs tracking-wider uppercase font-sans">
             Passage Planner Controls
           </span>
         </div>
-        <span className="text-[10px] px-2 py-0.5 bg-cyan-950/90 text-cyan-300 border border-cyan-500/40 rounded-full font-mono">
+        <span className="text-[10px] px-2 py-0.5 bg-sky-50 text-sky-700 border border-sky-200 rounded-full font-mono">
           Polaris Engine
         </span>
       </div>
 
       {/* STEP 1: Passage Destination & Objectives */}
-      <div className="bg-gradient-to-b from-[#0C203F] to-[#08152B] p-3.5 rounded-xl border border-cyan-500/30 shadow-lg space-y-3">
-        <div className="flex items-center justify-between border-b border-cyan-900/40 pb-1.5">
-          <span className="font-bold text-cyan-300 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-            <span className="w-4 h-4 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center font-extrabold text-[10px]">
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3.5">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+          <span className="font-bold text-slate-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+            <span className="w-4 h-4 rounded-full bg-sky-600 text-white flex items-center justify-center font-extrabold text-[10px]">
               1
             </span>
             Plan Destination & Objective
@@ -238,13 +238,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
         {/* Departure Point */}
         <div className="space-y-1">
-          <label className="text-[11px] text-slate-300 font-medium flex items-center gap-1.5">
+          <label className="text-[11px] text-slate-600 font-medium flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-400" />
             Departure Origin
           </label>
           <select
             id="select-departure-location"
-            className="w-full bg-[#050D1A] border border-cyan-500/30 text-slate-100 text-xs rounded-lg p-2 focus:border-cyan-400 focus:outline-none transition font-medium"
+            className="w-full bg-white border border-slate-300 text-slate-900 text-xs rounded-lg p-2 focus:border-sky-500 focus:ring-1 focus:ring-sky-200 focus:outline-none transition font-medium"
             value={startLocation.name}
             onChange={(e) => {
               const selected = departures.find((d) => d.name === e.target.value);
@@ -261,13 +261,13 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
         {/* Destination Station */}
         <div className="space-y-1">
-          <label className="text-[11px] text-slate-300 font-medium flex items-center gap-1.5">
+          <label className="text-[11px] text-slate-600 font-medium flex items-center gap-1.5">
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
             Target Antarctic Station
           </label>
           <select
             id="select-destination-station"
-            className="w-full bg-[#050D1A] border border-cyan-500/40 text-slate-100 text-xs rounded-lg p-2 focus:border-cyan-400 focus:outline-none transition font-semibold"
+            className="w-full bg-white border border-slate-300 text-slate-900 text-xs rounded-lg p-2 focus:border-sky-500 focus:ring-1 focus:ring-sky-200 focus:outline-none transition font-semibold"
             value={destination.name}
             onChange={(e) => {
               const selected = ANTARCTIC_RESEARCH_STATIONS.find((s) => s.name === e.target.value);
@@ -292,8 +292,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   onClick={() => onSelectDestination(qs.station!.name, qs.station!.coords)}
                   className={`text-[10px] px-2 py-1 rounded-md transition font-semibold border ${
                     isSelected
-                      ? 'bg-cyan-500/30 text-cyan-200 border-cyan-400 shadow-[0_0_8px_rgba(6,182,212,0.3)]'
-                      : 'bg-[#050D1A]/80 text-slate-400 border-slate-700 hover:text-slate-200 hover:border-slate-500'
+                      ? 'bg-sky-50 text-sky-700 border-sky-300 shadow-sm'
+                      : 'bg-white text-slate-500 border-slate-200 hover:text-slate-900 hover:border-slate-300'
                   }`}
                 >
                   {qs.name}
@@ -305,8 +305,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
         {/* Routing Objective Chips */}
         <div className="space-y-1.5 pt-1">
-          <label className="text-[11px] text-slate-300 font-medium flex items-center gap-1.5">
-            <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+          <label className="text-[11px] text-slate-600 font-medium flex items-center gap-1.5">
+            <Sliders className="w-3.5 h-3.5 text-sky-600" />
             Route Optimization Mode
           </label>
           <div className="grid grid-cols-2 gap-1.5">
@@ -320,8 +320,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                   onClick={() => onChangeObjective(obj.id)}
                   className={`p-2 rounded-lg text-left border transition-all ${
                     isSelected
-                      ? 'bg-gradient-to-br from-[#0E284E] to-[#0A1E3C] border-cyan-400 text-cyan-100 shadow-[0_0_10px_rgba(56,189,248,0.25)] font-semibold'
-                      : 'bg-[#050D1A] border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                      ? 'bg-sky-50 border-sky-300 text-slate-900 shadow-sm font-semibold'
+                      : 'bg-white border-slate-200 text-slate-500 hover:text-slate-900 hover:border-slate-300'
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -341,7 +341,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
         <button
           id="btn-recalculate-route-plan"
           onClick={onRecalculateRoutes}
-          className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold rounded-lg shadow-[0_0_18px_rgba(6,182,212,0.3)] transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider active:scale-98"
+          className="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-lg shadow-sm transition flex items-center justify-center gap-2 text-xs uppercase tracking-wider active:scale-98"
         >
           <RotateCcw className="w-4 h-4" />
           <span>Recalculate Safe Corridor</span>
@@ -349,15 +349,15 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </div>
 
       {/* STEP 2: 72-Hour Forecast Scrubber */}
-      <div className="bg-[#091830] p-3.5 rounded-xl border border-cyan-900/30 space-y-2.5">
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-cyan-300 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-            <span className="w-4 h-4 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center font-extrabold text-[10px]">
+          <span className="font-bold text-slate-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+            <span className="w-4 h-4 rounded-full bg-sky-600 text-white flex items-center justify-center font-extrabold text-[10px]">
               2
             </span>
             72h Ice Forecast Horizon
           </span>
-          <span className="text-cyan-300 font-bold text-[10px] bg-[#050D1A] px-2 py-0.5 rounded-full border border-cyan-500/30 font-mono">
+          <span className="text-sky-700 font-bold text-[10px] bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200 font-mono">
             {selectedHorizon === 0 ? 'NOW (Live Sat)' : `+${selectedHorizon}h Forecast`}
           </span>
         </div>
@@ -369,8 +369,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             title={isPlayingForecast ? 'Pause 72h forecast simulation' : 'Play 72h forecast simulation'}
             className={`p-1.5 rounded-lg border transition ${
               isPlayingForecast
-                ? 'bg-rose-950 text-rose-300 border-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.3)]'
-                : 'bg-[#050D1A] text-cyan-300 border-cyan-500/30 hover:border-cyan-400'
+                ? 'bg-rose-50 text-rose-700 border-rose-200'
+                : 'bg-white text-sky-600 border-slate-300 hover:border-sky-400'
             }`}
           >
             {isPlayingForecast ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
@@ -383,8 +383,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               onClick={() => onChangeHorizon(h)}
               className={`flex-1 py-1.5 rounded-lg text-center text-[11px] font-bold border transition ${
                 selectedHorizon === h
-                  ? 'bg-cyan-500 text-slate-950 border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)]'
-                  : 'bg-[#050D1A] text-slate-400 border-slate-800 hover:text-slate-200 hover:border-slate-700'
+                  ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
+                  : 'bg-white text-slate-500 border-slate-200 hover:text-slate-900 hover:border-slate-300'
               }`}
             >
               {h === 0 ? '0h' : `+${h}h`}
@@ -394,17 +394,17 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </div>
 
       {/* STEP 3: Map Preset Modes (Simplified Layer Controls) */}
-      <div className="bg-[#091830] p-3.5 rounded-xl border border-cyan-900/30 space-y-2.5">
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <span className="font-bold text-cyan-300 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
-            <span className="w-4 h-4 rounded-full bg-cyan-500 text-slate-950 flex items-center justify-center font-extrabold text-[10px]">
+          <span className="font-bold text-slate-900 flex items-center gap-1.5 text-[11px] uppercase tracking-wider">
+            <span className="w-4 h-4 rounded-full bg-sky-600 text-white flex items-center justify-center font-extrabold text-[10px]">
               3
             </span>
             Map Display Mode
           </span>
           <button
             onClick={() => setShowManualCheckboxes(!showManualCheckboxes)}
-            className="text-[10px] text-cyan-400 hover:underline flex items-center gap-1 font-medium"
+            className="text-[10px] text-sky-600 hover:text-sky-700 hover:underline flex items-center gap-1 font-medium"
           >
             {showManualCheckboxes ? 'Hide Manual Layers' : 'Manual Layers'}
             {showManualCheckboxes ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -417,8 +417,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             onClick={() => applyPreset('tactical')}
             className={`p-2 rounded-lg border text-center transition ${
               activePreset === 'tactical'
-                ? 'bg-cyan-950 text-cyan-200 border-cyan-400 font-bold shadow-[0_0_10px_rgba(6,182,212,0.2)]'
-                : 'bg-[#050D1A] text-slate-400 border-slate-800 hover:text-slate-200'
+                ? 'bg-sky-50 text-sky-700 border-sky-300 font-bold shadow-sm'
+                : 'bg-white text-slate-500 border-slate-200 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
             <div className="text-[11px]">🎯 Tactical</div>
@@ -428,8 +428,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             onClick={() => applyPreset('hazard')}
             className={`p-2 rounded-lg border text-center transition ${
               activePreset === 'hazard'
-                ? 'bg-cyan-950 text-cyan-200 border-cyan-400 font-bold shadow-[0_0_10px_rgba(6,182,212,0.2)]'
-                : 'bg-[#050D1A] text-slate-400 border-slate-800 hover:text-slate-200'
+                ? 'bg-sky-50 text-sky-700 border-sky-300 font-bold shadow-sm'
+                : 'bg-white text-slate-500 border-slate-200 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
             <div className="text-[11px]">⚠️ Hazard Radar</div>
@@ -439,8 +439,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
             onClick={() => applyPreset('metocean')}
             className={`p-2 rounded-lg border text-center transition ${
               activePreset === 'metocean'
-                ? 'bg-cyan-950 text-cyan-200 border-cyan-400 font-bold shadow-[0_0_10px_rgba(6,182,212,0.2)]'
-                : 'bg-[#050D1A] text-slate-400 border-slate-800 hover:text-slate-200'
+                ? 'bg-sky-50 text-sky-700 border-sky-300 font-bold shadow-sm'
+                : 'bg-white text-slate-500 border-slate-200 hover:text-slate-900 hover:border-slate-300'
             }`}
           >
             <div className="text-[11px]">🌊 Metocean</div>
@@ -450,8 +450,8 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
 
         {/* Optional Manual Checkboxes (Collapsed by Default) */}
         {showManualCheckboxes && (
-          <div className="pt-2 border-t border-slate-800/80 space-y-2 text-xs">
-            <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider block">
+          <div className="pt-2 border-t border-slate-200 space-y-2 text-xs">
+            <span className="text-[10px] text-sky-600 font-bold uppercase tracking-wider block">
               ⚙️ Manual Overlay Checkboxes
             </span>
             <div className="grid grid-cols-1 gap-1.5 pl-1 max-h-48 overflow-y-auto scrollbar-thin">
@@ -472,7 +472,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
               ].map((item) => (
                 <label
                   key={item.key}
-                  className="flex items-center gap-2 text-slate-300 hover:text-slate-100 cursor-pointer text-[11px]"
+                  className="flex items-center gap-2 text-slate-600 hover:text-slate-900 cursor-pointer text-[11px]"
                 >
                   <input
                     type="checkbox"
@@ -482,7 +482,7 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
                       setActivePreset('custom');
                       onToggleLayer(item.key as keyof MapLayerVisibility);
                     }}
-                    className="rounded border-slate-700 bg-[#050D1A] text-cyan-500 focus:ring-cyan-400 focus:ring-offset-[#071326] h-3.5 w-3.5"
+                    className="rounded border-slate-300 bg-white text-sky-600 focus:ring-sky-400 focus:ring-offset-white h-3.5 w-3.5"
                   />
                   <span>{item.label}</span>
                 </label>
@@ -493,21 +493,21 @@ export const NavigationSidebar: React.FC<NavigationSidebarProps> = ({
       </div>
 
       {/* Active Vessel Specifications Card */}
-      <div className="bg-[#091830] p-3 rounded-xl border border-cyan-900/30 space-y-1.5">
+      <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm space-y-1.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Ship className="w-3.5 h-3.5 text-cyan-400" />
-            <span className="font-bold text-slate-200 text-xs uppercase tracking-wider">
+            <Ship className="w-3.5 h-3.5 text-sky-600" />
+            <span className="font-bold text-slate-900 text-xs uppercase tracking-wider">
               {vessel.name.split('/')[0]}
             </span>
           </div>
-          <span className="text-[10px] px-2 py-0.2 bg-emerald-950 text-emerald-300 border border-emerald-500/50 rounded-full font-bold">
+          <span className="text-[10px] px-2 py-0.2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-bold">
             {vessel.iceClass}
           </span>
         </div>
-        <div className="flex justify-between text-[10px] text-slate-400 pt-0.5">
-          <span>Speed: <strong className="text-cyan-300 font-mono">{vessel.cruisingSpeedKnots} kts</strong></span>
-          <span>Fuel: <strong className="text-amber-300 font-mono">{vessel.fuelConsumptionLPerHr} L/hr</strong></span>
+        <div className="flex justify-between text-[10px] text-slate-500 pt-0.5">
+          <span>Speed: <strong className="text-sky-600 font-mono">{vessel.cruisingSpeedKnots} kts</strong></span>
+          <span>Fuel: <strong className="text-amber-700 font-mono">{vessel.fuelConsumptionLPerHr} L/hr</strong></span>
         </div>
       </div>
     </aside>

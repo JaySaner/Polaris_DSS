@@ -68,15 +68,15 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
         center: { lat: -70.0, lng: 50.0 }, // Southern Ocean sector
         zoom: 3,
         mapTypeId: 'satellite',
-        backgroundColor: '#060B19',
+        backgroundColor: '#F8FAFC',
         tilt: 0,
         mapTypeControl: true,
         streetViewControl: false,
         fullscreenControl: false,
         styles: [
-          { elementType: 'geometry', stylers: [{ color: '#091B33' }] },
-          { elementType: 'labels.text.stroke', stylers: [{ color: '#060B19' }] },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#93C5FD' }] },
+          { elementType: 'geometry', stylers: [{ color: '#E2E8F0' }] },
+          { elementType: 'labels.text.stroke', stylers: [{ color: '#F8FAFC' }] },
+          { elementType: 'labels.text.fill', stylers: [{ color: '#0F172A' }] },
         ],
       });
 

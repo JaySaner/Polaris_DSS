@@ -201,7 +201,7 @@ export default function App() {
   return (
     <div
       id="antarctic-dss-application"
-      className="flex flex-col w-full h-screen bg-[#060B19] text-slate-100 font-mono select-none overflow-hidden"
+      className="flex flex-col w-full h-screen bg-slate-50 text-slate-900 font-mono select-none overflow-hidden"
     >
       {/* 1. Scientific Header with Clocks, Tab Navigation, Alert Badge */}
       <Header
