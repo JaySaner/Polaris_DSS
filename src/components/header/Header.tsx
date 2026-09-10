@@ -19,6 +19,7 @@ import {
   CloudSnow,
   Film,
   User,
+  Archive,
 } from 'lucide-react';
 import { UserGuideModal } from '../modals/UserGuideModal';
 
@@ -77,6 +78,7 @@ export const Header: React.FC<HeaderProps> = ({
     { id: 'explainable-ai', label: 'Explainable AI', icon: Shield, researcherOnly: true },
     { id: 'metrics', label: 'AI Validation', icon: Radio, researcherOnly: true },
     { id: 'datasources', label: 'Data Feeds', icon: Database, researcherOnly: true },
+    { id: 'route-history', label: 'Route History', icon: Archive, researcherOnly: true },
     { id: 'vessel', label: 'Vessel Profile', icon: Ship, researcherOnly: false },
   ];
 
@@ -268,10 +270,28 @@ export const Header: React.FC<HeaderProps> = ({
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
+          const rolePrefix = userRole === 'navigator' ? 'captain' : 'researcher';
+          const tabSlugs: Record<string, string> = {
+            dashboard: 'home',
+            routes: 'voyage-planning',
+            forecasts: '72h-forecasts',
+            icebergs: 'iceberg-tracker',
+            'explainable-ai': 'explainable-ai',
+            metrics: 'ai-validation',
+            datasources: 'data-feeds',
+            vessel: 'vessel-profile',
+          };
+          const href = `#${rolePrefix}/${tabSlugs[tab.id] || tab.id}`;
+
           return (
-            <button
+            <a
               key={tab.id}
-              onClick={() => onSelectTab(tab.id)}
+              href={href}
+              onClick={(e) => {
+                e.preventDefault();
+                onSelectTab(tab.id);
+                window.location.hash = href;
+              }}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 whitespace-nowrap flex-shrink-0 ${
                 isActive
                   ? 'bg-blue-600 text-white shadow font-bold'
@@ -289,7 +309,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {tab.badge}
                 </span>
               )}
-            </button>
+            </a>
           );
         })}
       </nav>

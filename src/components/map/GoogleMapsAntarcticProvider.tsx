@@ -85,21 +85,16 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
     const initMap = () => {
       if (!mapContainerRef.current || !window.google) return;
 
-      // Initialize map centered at Antarctic Southern Ocean gateway
+      // Initialize map centered at Antarctic Prydz Bay / Southern Ocean transit zone
       const map = new window.google.maps.Map(mapContainerRef.current, {
-        center: { lat: -70.0, lng: 50.0 }, // Southern Ocean sector
-        zoom: 3,
+        center: { lat: -66.5, lng: 70.0 }, // Prydz Bay / Bharati corridor
+        zoom: 4,
         mapTypeId: 'satellite',
-        backgroundColor: '#060B19',
+        backgroundColor: '#030712',
         tilt: 0,
         mapTypeControl: true,
         streetViewControl: false,
         fullscreenControl: false,
-        styles: [
-          { elementType: 'geometry', stylers: [{ color: '#091B33' }] },
-          { elementType: 'labels.text.stroke', stylers: [{ color: '#060B19' }] },
-          { elementType: 'labels.text.fill', stylers: [{ color: '#93C5FD' }] },
-        ],
       });
 
       mapInstanceRef.current = map;
@@ -112,16 +107,20 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
       markersRef.current = [];
       if (polylineRef.current) polylineRef.current.setMap(null);
 
+      const infoWindow = new window.google.maps.InfoWindow();
+
       // Add Research Station Markers
       ANTARCTIC_RESEARCH_STATIONS.forEach((stn) => {
+        const isIndian = stn.country === 'India';
         const marker = new window.google.maps.Marker({
           position: { lat: stn.coords.lat, lng: stn.coords.lon },
           map,
           title: `${stn.name} (${stn.country})`,
+          label: isIndian ? { text: `★ ${stn.name}`, color: '#FFD700', fontSize: '11px', fontWeight: 'bold' } : undefined,
           icon: {
             path: window.google.maps.SymbolPath.CIRCLE,
-            scale: stn.country === 'India' ? 8 : 5,
-            fillColor: stn.country === 'India' ? '#FF9933' : '#38BDF8',
+            scale: isIndian ? 9 : 5,
+            fillColor: isIndian ? '#FF9933' : '#38BDF8',
             fillOpacity: 1,
             strokeColor: '#FFFFFF',
             strokeWeight: 2,
@@ -129,6 +128,15 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
         });
 
         marker.addListener('click', () => {
+          infoWindow.setContent(`
+            <div style="color: #0f172a; padding: 4px; font-family: sans-serif; max-width: 220px;">
+              <h3 style="margin: 0; font-size: 13px; font-weight: 800; color: #1e293b;">${stn.name}</h3>
+              <p style="margin: 2px 0 6px 0; font-size: 10px; color: #64748b; font-weight: 700;">Operator: ${stn.operator} (${stn.country})</p>
+              <p style="margin: 0; font-size: 11px; line-height: 1.3;">${stn.description}</p>
+              <div style="margin-top: 6px; font-size: 10px; font-weight: bold; color: #2563eb;">Coords: ${stn.coords.lat.toFixed(2)}°S, ${stn.coords.lon.toFixed(2)}°E</div>
+            </div>
+          `);
+          infoWindow.open(map, marker);
           onSelectStation(stn, 'dest');
         });
         markersRef.current.push(marker);
@@ -136,21 +144,36 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
 
       // Add Icebergs
       icebergs.forEach((berg) => {
+        const isExtreme = berg.riskRating === 'EXTREME';
+        const isHigh = berg.riskRating === 'HIGH';
         const marker = new window.google.maps.Marker({
           position: { lat: berg.currentPosition.lat, lng: berg.currentPosition.lon },
           map,
-          title: `Iceberg ${berg.name} (Risk: ${berg.riskRating})`,
+          title: `${berg.name} (Risk: ${berg.riskRating})`,
+          label: isExtreme || isHigh ? { text: `🧊 ${berg.id}`, color: '#FFFFFF', fontSize: '10px', fontWeight: 'bold' } : undefined,
           icon: {
             path: 'M 0,-8 L 8,0 L 0,8 L -8,0 Z',
-            scale: 1.2,
-            fillColor: berg.riskRating === 'EXTREME' ? '#EF4444' : '#0EA5E9',
-            fillOpacity: 0.9,
+            scale: isExtreme ? 1.6 : isHigh ? 1.3 : 1.0,
+            fillColor: isExtreme ? '#EF4444' : isHigh ? '#F59E0B' : '#0EA5E9',
+            fillOpacity: 0.95,
             strokeColor: '#FFFFFF',
-            strokeWeight: 1.5,
+            strokeWeight: 1.8,
           },
         });
 
         marker.addListener('click', () => {
+          infoWindow.setContent(`
+            <div style="color: #0f172a; padding: 4px; font-family: sans-serif; max-width: 230px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0; font-size: 12px; font-weight: 800;">${berg.name}</h3>
+                <span style="font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; background: ${isExtreme ? '#fee2e2' : '#fef3c7'}; color: ${isExtreme ? '#b91c1c' : '#b45309'};">${berg.riskRating} RISK</span>
+              </div>
+              <p style="margin: 4px 0; font-size: 11px; font-weight: 600;">Dimensions: ${berg.lengthKm} x ${berg.widthKm} km</p>
+              <p style="margin: 0; font-size: 11px; font-weight: 600; color: #059669;">Drift Speed: ${berg.speedKnots} kts @ ${berg.driftHeadingDeg}°</p>
+              <p style="margin: 4px 0 0 0; font-size: 10px; color: #64748b;">Source: ${berg.dataSource}</p>
+            </div>
+          `);
+          infoWindow.open(map, marker);
           onSelectIceberg(berg);
         });
         markersRef.current.push(marker);
@@ -161,9 +184,10 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
         position: { lat: vessel.currentPosition.lat, lng: vessel.currentPosition.lon },
         map,
         title: `${vessel.name} (Cruising @ ${vessel.cruisingSpeedKnots} kts)`,
+        label: { text: `🚢 ${vessel.name.split('/')[0].trim()}`, color: '#4ADE80', fontSize: '11px', fontWeight: 'bold' },
         icon: {
           path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-          scale: 6,
+          scale: 7,
           rotation: vessel.currentHeadingDeg,
           fillColor: '#22C55E',
           fillOpacity: 1,
@@ -171,6 +195,19 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
           strokeWeight: 2,
         },
       });
+
+      vesselMarker.addListener('click', () => {
+        infoWindow.setContent(`
+          <div style="color: #0f172a; padding: 4px; font-family: sans-serif; max-width: 220px;">
+            <h3 style="margin: 0; font-size: 13px; font-weight: 800; color: #166534;">🚢 ${vessel.name}</h3>
+            <p style="margin: 2px 0 4px 0; font-size: 10px; color: #64748b; font-weight: 700;">Ice Class: ${vessel.iceClass} | CallSign: ${vessel.callSign}</p>
+            <p style="margin: 0; font-size: 11px; font-weight: 600;">Speed: ${vessel.cruisingSpeedKnots} kts | Heading: ${vessel.currentHeadingDeg}°</p>
+            <p style="margin: 4px 0 0 0; font-size: 10px; color: #3b82f6; font-weight: 700;">Fix: ${vessel.currentPosition.lat.toFixed(2)}°S, ${vessel.currentPosition.lon.toFixed(2)}°E</p>
+          </div>
+        `);
+        infoWindow.open(map, vesselMarker);
+      });
+
       markersRef.current.push(vesselMarker);
 
       // Add Recommended Route Line
@@ -183,9 +220,9 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
         const polyline = new window.google.maps.Polyline({
           path: pathCoords,
           geodesic: true,
-          strokeColor: '#38BDF8',
-          strokeOpacity: 0.9,
-          strokeWeight: 4,
+          strokeColor: '#10B981',
+          strokeOpacity: 0.95,
+          strokeWeight: 5,
           map,
         });
         polylineRef.current = polyline;

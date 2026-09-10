@@ -111,14 +111,32 @@ export class RouteOptimizer {
   }
 
   private generateGeodesicPath(start: GeoCoordinate, dest: GeoCoordinate, steps: number): GeoCoordinate[] {
-    const totalDist = calculateHaversineDistanceKm(start, dest);
-    const bearing = calculateBearingDeg(start, dest);
     const pts: GeoCoordinate[] = [];
+
+    let lonDiff = dest.lon - start.lon;
+    if (lonDiff > 180) lonDiff -= 360;
+    if (lonDiff < -180) lonDiff += 360;
 
     for (let i = 0; i <= steps; i++) {
       const frac = i / steps;
-      const pt = calculateDestinationPoint(start, totalDist * frac, bearing);
-      pts.push(pt);
+      
+      // Linear interpolation of longitude
+      const ptLon = start.lon + lonDiff * frac;
+      let normLon = ptLon;
+      while (normLon > 180) normLon -= 360;
+      while (normLon <= -180) normLon += 360;
+
+      // Linear interpolation of latitude
+      const baseLat = start.lat + (dest.lat - start.lat) * frac;
+      
+      // Add a northward arc (towards equator) to prevent crossing the Antarctic continent.
+      // The further the longitudinal distance, the more we arc north into the open Southern Ocean.
+      // 15 degrees max bulge for a half-world journey (180 deg lon difference).
+      const arcBonus = Math.sin(frac * Math.PI) * (Math.abs(lonDiff) / 180) * 15;
+      
+      const ptLat = parseFloat((baseLat + arcBonus).toFixed(3));
+      
+      pts.push({ lat: ptLat, lon: parseFloat(normLon.toFixed(3)) });
     }
     return pts;
   }

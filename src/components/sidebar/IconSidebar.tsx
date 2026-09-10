@@ -9,6 +9,7 @@ import {
   Ship,
   Compass,
   Microscope,
+  Archive,
 } from 'lucide-react';
 
 interface IconSidebarProps {
@@ -26,6 +27,7 @@ const navItems = [
   { id: 'explainable-ai', icon: AlertTriangle, label: 'Safety', researcherOnly: true },
   { id: 'metrics', icon: BarChart2, label: 'Analysis', researcherOnly: true },
   { id: 'datasources', icon: Database, label: 'Data Hub', researcherOnly: true },
+  { id: 'route-history', icon: Archive, label: 'History', researcherOnly: true },
   { id: 'vessel', icon: Ship, label: 'Vessel' },
 ];
 
@@ -46,10 +48,29 @@ export const IconSidebar: React.FC<IconSidebarProps> = ({ activeTab, onSelectTab
           if (userRole === 'navigator' && item.researcherOnly) return null;
           const Icon = item.icon;
           const isActive = activeTab === item.id;
+          const rolePrefix = userRole === 'navigator' ? 'captain' : 'researcher';
+          const tabSlugs: Record<string, string> = {
+            dashboard: 'home',
+            routes: 'voyage-planning',
+            forecasts: '72h-forecasts',
+            icebergs: 'iceberg-tracker',
+            'explainable-ai': 'explainable-ai',
+            metrics: 'ai-validation',
+            datasources: 'data-feeds',
+            'route-history': 'route-history',
+            vessel: 'vessel-profile',
+          };
+          const href = `#${rolePrefix}/${tabSlugs[item.id] || item.id}`;
+
           return (
-            <button
+            <a
               key={item.id}
-              onClick={() => onSelectTab(item.id)}
+              href={href}
+              onClick={(e) => {
+                e.preventDefault();
+                onSelectTab(item.id);
+                window.location.hash = href;
+              }}
               title={item.label}
               className={`w-full flex flex-col items-center gap-0.5 py-2 rounded-xl text-[10px] font-medium transition-all ${
                 isActive
@@ -59,7 +80,7 @@ export const IconSidebar: React.FC<IconSidebarProps> = ({ activeTab, onSelectTab
             >
               <Icon className="w-5 h-5" strokeWidth={isActive ? 2.2 : 1.8} />
               <span className="leading-none">{item.label}</span>
-            </button>
+            </a>
           );
         })}
       </nav>

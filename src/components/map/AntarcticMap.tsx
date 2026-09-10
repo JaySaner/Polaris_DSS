@@ -665,9 +665,13 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     ctx.lineTo(p.x + Math.cos(driftRad) * arrowLen, p.y + Math.sin(driftRad) * arrowLen);
     ctx.stroke();
 
-    ctx.fillStyle = '#F1F5F9';
     ctx.font = 'bold 9px monospace';
-    ctx.fillText(`${berg.id}`, p.x + sz + 3, p.y + 3);
+    const text = `${berg.id}`;
+    const tw = ctx.measureText(text).width;
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+    ctx.fillRect(p.x + sz + 1, p.y - 5, tw + 4, 11);
+    ctx.fillStyle = '#F1F5F9';
+    ctx.fillText(text, p.x + sz + 3, p.y + 3);
 
     ctx.restore();
   };
@@ -695,9 +699,13 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      ctx.fillStyle = '#FEF08A';
       ctx.font = 'bold 10px sans-serif';
-      ctx.fillText(`★ ${stn.name}`, p.x + 8, p.y + 3);
+      const text = `★ ${stn.name}`;
+      const tw = ctx.measureText(text).width;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+      ctx.fillRect(p.x + 6, p.y - 5, tw + 4, 12);
+      ctx.fillStyle = '#FEF08A';
+      ctx.fillText(text, p.x + 8, p.y + 3);
     } else {
       ctx.fillStyle = '#38BDF8';
       ctx.beginPath();
@@ -707,9 +715,13 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
       ctx.lineWidth = 1;
       ctx.stroke();
 
-      ctx.fillStyle = '#94A3B8';
       ctx.font = '9px sans-serif';
-      ctx.fillText(stn.name.replace(' Station', '').replace(' Research', ''), p.x + 6, p.y + 3);
+      const text = stn.name.replace(' Station', '').replace(' Research', '');
+      const tw = ctx.measureText(text).width;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+      ctx.fillRect(p.x + 4, p.y - 5, tw + 4, 11);
+      ctx.fillStyle = '#94A3B8';
+      ctx.fillText(text, p.x + 6, p.y + 3);
     }
     ctx.restore();
   };
@@ -751,12 +763,24 @@ export const AntarcticMap: React.FC<AntarcticMapProps> = ({
     ctx.rotate(-headingRad);
     ctx.translate(-p.x, -p.y);
 
+    ctx.font = 'bold 9px sans-serif';
+    const nameText = `🚢 ${v.name.split('/')[0]}`;
+    const tw1 = ctx.measureText(nameText).width;
+    
+    ctx.font = '8px monospace';
+    const detailText = `${v.cruisingSpeedKnots} kts | HDG ${v.currentHeadingDeg}°`;
+    const tw2 = ctx.measureText(detailText).width;
+    
+    const maxTw = Math.max(tw1, tw2);
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.8)';
+    ctx.fillRect(p.x + 10, p.y - 14, maxTw + 4, 22);
+
     ctx.fillStyle = '#4ADE80';
     ctx.font = 'bold 9px sans-serif';
-    ctx.fillText(`🚢 ${v.name.split('/')[0]}`, p.x + 12, p.y - 6);
+    ctx.fillText(nameText, p.x + 12, p.y - 6);
     ctx.fillStyle = '#94A3B8';
     ctx.font = '8px monospace';
-    ctx.fillText(`${v.cruisingSpeedKnots} kts | HDG ${v.currentHeadingDeg}°`, p.x + 12, p.y + 6);
+    ctx.fillText(detailText, p.x + 12, p.y + 6);
 
     ctx.restore();
   };

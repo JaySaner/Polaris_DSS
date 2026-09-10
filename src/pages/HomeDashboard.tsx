@@ -59,6 +59,7 @@ interface HomeDashboardProps {
   onAcknowledgeAlert: (id: string) => void;
   onSimulateDriftSpike: (bergId: string) => void;
   mapProvider: 'antarctic-polar' | 'google-maps-satellite';
+  onToggleMapProvider?: () => void;
   onNavigateToTab: (tabId: string) => void;
   recalculationBanner: { show: boolean; oldRouteName: string; newRouteName: string; reason: string } | null;
   onDismissRecalculationBanner: () => void;
@@ -134,6 +135,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
   onAcknowledgeAlert,
   onSimulateDriftSpike,
   mapProvider,
+  onToggleMapProvider,
   onNavigateToTab,
   recalculationBanner,
   onDismissRecalculationBanner,
@@ -325,6 +327,50 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
           </div>
           )}
 
+          {/* ─── Quick View Presets Control ─── */}
+          <div className="absolute top-20 right-3 z-20 flex gap-2 pointer-events-auto">
+            <button
+              onClick={() => {
+                if (mapProvider === 'google-maps-satellite' && onToggleMapProvider) onToggleMapProvider();
+                if (layers.seaIce) onToggleLayer('seaIce');
+                if (layers.riskGrid) onToggleLayer('riskGrid');
+              }}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg backdrop-blur-md shadow border transition ${
+                mapProvider === 'antarctic-polar' && !layers.seaIce && !layers.riskGrid
+                  ? 'bg-blue-600 text-white border-blue-500'
+                  : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:bg-slate-800'
+              }`}
+            >
+              Tactical Clean
+            </button>
+            <button
+              onClick={() => {
+                if (mapProvider === 'antarctic-polar' && onToggleMapProvider) onToggleMapProvider();
+              }}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg backdrop-blur-md shadow border transition ${
+                mapProvider === 'google-maps-satellite'
+                  ? 'bg-blue-600 text-white border-blue-500'
+                  : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:bg-slate-800'
+              }`}
+            >
+              Satellite View
+            </button>
+            <button
+              onClick={() => {
+                if (mapProvider === 'google-maps-satellite' && onToggleMapProvider) onToggleMapProvider();
+                if (!layers.seaIce) onToggleLayer('seaIce');
+                if (!layers.riskGrid) onToggleLayer('riskGrid');
+              }}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg backdrop-blur-md shadow border transition ${
+                mapProvider === 'antarctic-polar' && layers.seaIce && layers.riskGrid
+                  ? 'bg-blue-600 text-white border-blue-500'
+                  : 'bg-slate-900/80 text-slate-300 border-slate-700 hover:bg-slate-800'
+              }`}
+            >
+              Full Science
+            </button>
+          </div>
+
           {/* ─── Captain Quick Decision Panel (Only when sidebar is collapsed to prevent overlap) ─── */}
           {isNavigator && isSidebarCollapsed && (
             <div
@@ -513,7 +559,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
               onSelectSeaIcePoint={(pt) => setSelectedSeaIcePoint(pt)}
               onSelectWaypoint={(wp) => setSelectedWaypoint(wp)}
               mapProviderType={mapProvider}
-              onToggleMapProvider={() => setMapProvider((prev) => (prev === 'antarctic-polar' ? 'google-maps-satellite' : 'antarctic-polar'))}
+              onToggleMapProvider={onToggleMapProvider}
             />
           ) : (
             <GoogleMapsAntarcticProvider
@@ -526,7 +572,7 @@ export const HomeDashboard: React.FC<HomeDashboardProps> = ({
                 const forecast = (window as any)._tempForecast || null;
                 setSelectedIceberg({ obs: berg, forecast });
               }}
-              onToggleMapProvider={() => setMapProvider((prev) => (prev === 'antarctic-polar' ? 'google-maps-satellite' : 'antarctic-polar'))}
+              onToggleMapProvider={onToggleMapProvider}
             />
           )}
         </div>

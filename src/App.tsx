@@ -22,6 +22,7 @@ import { icebergTrajectoryModel } from './services/icebergTrajectoryModel';
 import { riskEngine } from './services/riskEngine';
 import { routeOptimizer } from './services/routeOptimizer';
 import { alertService } from './services/alertService';
+import { calculateHaversineDistanceKm } from './utils/geoUtils';
 import { Header } from './components/header/Header';
 import { IconSidebar } from './components/sidebar/IconSidebar';
 import { Footer } from './components/footer/Footer';
@@ -33,13 +34,97 @@ import { ModelPerformancePage } from './pages/ModelPerformancePage';
 import { DataSourcesPage } from './pages/DataSourcesPage';
 import { VesselProfilePage } from './pages/VesselProfilePage';
 import { IcebergTrackerPage } from './pages/IcebergTrackerPage';
+import { RouteHistoryPage } from './pages/RouteHistoryPage';
+
+const TAB_SLUGS: Record<string, string> = {
+  dashboard: 'home',
+  routes: 'voyage-planning',
+  forecasts: '72h-forecasts',
+  icebergs: 'iceberg-tracker',
+  'explainable-ai': 'explainable-ai',
+  metrics: 'ai-validation',
+  datasources: 'data-feeds',
+  vessel: 'vessel-profile',
+  'route-history': 'route-history',
+};
+
+const SLUG_TO_TAB: Record<string, string> = {
+  home: 'dashboard',
+  dashboard: 'dashboard',
+  'voyage-planning': 'routes',
+  routes: 'routes',
+  '72h-forecasts': 'forecasts',
+  forecasts: 'forecasts',
+  'iceberg-tracker': 'icebergs',
+  icebergs: 'icebergs',
+  'explainable-ai': 'explainable-ai',
+  'ai-validation': 'metrics',
+  metrics: 'metrics',
+  'data-feeds': 'datasources',
+  datasources: 'datasources',
+  'vessel-profile': 'vessel',
+  vessel: 'vessel',
+  'route-history': 'route-history',
+};
+
+function getHashForState(role: 'navigator' | 'researcher', tab: string): string {
+  const rolePrefix = role === 'navigator' ? 'captain' : 'researcher';
+  const slug = TAB_SLUGS[tab] || tab;
+  return `#${rolePrefix}/${slug}`;
+}
+
+function parseHash(hashString: string): { role: 'navigator' | 'researcher'; tab: string } {
+  let hash = hashString.replace(/^#\/?/, '').trim();
+  if (!hash) {
+    return { role: 'navigator', tab: 'dashboard' };
+  }
+
+  let role: 'navigator' | 'researcher' = 'navigator';
+  let slug = hash;
+
+  if (hash.startsWith('captain/')) {
+    role = 'navigator';
+    slug = hash.replace('captain/', '');
+  } else if (hash.startsWith('researcher/')) {
+    role = 'researcher';
+    slug = hash.replace('researcher/', '');
+  } else if (
+    ['iceberg-tracker', 'icebergs', 'explainable-ai', 'ai-validation', 'metrics', 'data-feeds', 'datasources'].includes(slug)
+  ) {
+    role = 'researcher';
+  }
+
+  const tab = SLUG_TO_TAB[slug] || 'dashboard';
+  return { role, tab };
+}
 
 export default function App() {
-  // Navigation, Role & Theme State
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
-  const [userRole, setUserRole] = useState<'navigator' | 'researcher'>('navigator');
+  // Navigation, Role & Theme State initialized from URL hash
+  const initialNav = useMemo(() => parseHash(window.location.hash), []);
+  const [activeTab, setActiveTab] = useState<string>(initialNav.tab);
+  const [userRole, setUserRole] = useState<'navigator' | 'researcher'>(initialNav.role);
   const [theme, setTheme] = useState<'dark' | 'light'>('light');
   const [mapProvider, setMapProvider] = useState<'antarctic-polar' | 'google-maps-satellite'>('antarctic-polar');
+
+  // Synchronize window.location.hash with activeTab and userRole
+  useEffect(() => {
+    const targetHash = getHashForState(userRole, activeTab);
+    if (window.location.hash !== targetHash) {
+      window.history.replaceState(null, '', targetHash);
+    }
+  }, [activeTab, userRole]);
+
+  // Listen for hashchange events (back/forward or manual URL edit)
+  useEffect(() => {
+    const handleHashChange = () => {
+      const parsed = parseHash(window.location.hash);
+      setActiveTab(parsed.tab);
+      setUserRole(parsed.role);
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   // Sync theme with HTML document element for proper Tailwind dark: styling
   useEffect(() => {
@@ -194,44 +279,64 @@ export default function App() {
     if (rec) setSelectedRouteId(rec.id);
   }, [startLocation, destination, vessel, objective, icebergs]);
 
-  // Scenario Simulation: Simulate Iceberg Sudden Drift Surge (Tests reactive hazard recalculation)
-  const handleSimulateDriftSpike = useCallback((bergId: string) => {
-    setIcebergs((prev) =>
-      prev.map((b) => {
-        if (b.id === bergId || b.id === 'B-001') {
-          return {
-            ...b,
-            currentPosition: {
-              lat: startLocation.coords.lat - 1.2,
-              lon: startLocation.coords.lon + 0.8,
-            },
-            speedKnots: parseFloat((b.speedKnots + 1.2).toFixed(1)),
-            riskRating: 'EXTREME' as const,
-          };
-        }
-        return b;
-      })
-    );
+  // Scenario Simulation: Simulate Iceberg Drift Surge (+0.8 kts)
+  const handleSimulateDriftSpike = useCallback(
+    (bergId: string) => {
+      let targetBergName = `Iceberg ${bergId}`;
+      let isThreat = false;
 
-    const newAlert = alertService.addAlert({
-      type: 'CRITICAL',
-      title: `HAZARD DETECTED: Iceberg ${bergId} Accelerated Drift Intercept`,
-      message: `Iceberg ${bergId} accelerated by +1.2 knots heading directly into Route A transit lane. CPA dropped to 4.2 NM. Safety index degraded to 42/100.`,
-      affectedRouteId: 'route-a-direct',
-      timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
-      recommendedAction: 'Execute automatic bypass reroute via Route B corridor.',
-    });
+      setIcebergs((prev) =>
+        prev.map((b) => {
+          if (b.id === bergId) {
+            targetBergName = b.name;
+            const newSpeed = parseFloat((b.speedKnots + 0.8).toFixed(1));
+            const distKm = calculateHaversineDistanceKm(b.currentPosition, startLocation.coords);
 
-    setAlerts(alertService.getAlerts());
+            // Compute realistic risk rating after speed surge
+            let newRisk: 'LOW' | 'MEDIUM' | 'HIGH' | 'EXTREME' = b.riskRating;
+            if (distKm < 150 && newSpeed >= 2.0) {
+              newRisk = 'EXTREME';
+              isThreat = true;
+            } else if (distKm < 250 || newSpeed >= 2.2 || b.areaKm2 > 1000) {
+              newRisk = b.riskRating === 'LOW' ? 'MEDIUM' : b.riskRating === 'MEDIUM' ? 'HIGH' : b.riskRating;
+              if (distKm < 200) isThreat = true;
+            } else {
+              newRisk = b.riskRating;
+            }
 
-    setSelectedRouteId('route-b-safety');
-    setRecalculationBanner({
-      show: true,
-      oldRouteName: 'Route A (Direct Great Circle)',
-      newRouteName: 'Route B (Polar Safety & Lead Bypass)',
-      reason: `Iceberg ${bergId} accelerated drift surge into track corridor (CPA < 5 NM). Automatic safe bypass executed.`,
-    });
-  }, [startLocation]);
+            return {
+              ...b,
+              speedKnots: newSpeed,
+              riskRating: newRisk,
+            };
+          }
+          return b;
+        })
+      );
+
+      // Trigger route update alert ONLY if the surging iceberg is in proximity to transit route
+      if (isThreat) {
+        alertService.addAlert({
+          type: 'CRITICAL',
+          title: `HAZARD DETECTED: ${targetBergName} Drift Surge (+0.8 kts)`,
+          message: `${targetBergName} accelerated to higher speed near transit corridor. Proximity hazard updated.`,
+          affectedRouteId: 'route-a-direct',
+          timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19) + ' UTC',
+          recommendedAction: 'Execute safe bypass reroute via Route B corridor.',
+        });
+
+        setAlerts(alertService.getAlerts());
+        setSelectedRouteId('route-b-safety');
+        setRecalculationBanner({
+          show: true,
+          oldRouteName: 'Route A (Direct Great Circle)',
+          newRouteName: 'Route B (Polar Safety & Lead Bypass)',
+          reason: `${targetBergName} drift surge (+0.8 kts) detected near track corridor. Safe bypass active.`,
+        });
+      }
+    },
+    [startLocation]
+  );
 
   // If user role changes to navigator while on a researcher-only tab, switch back to dashboard
   useEffect(() => {
@@ -303,6 +408,9 @@ export default function App() {
               onAcknowledgeAlert={handleAcknowledgeAlert}
               onSimulateDriftSpike={handleSimulateDriftSpike}
               mapProvider={mapProvider}
+              onToggleMapProvider={() =>
+                setMapProvider((p) => (p === 'antarctic-polar' ? 'google-maps-satellite' : 'antarctic-polar'))
+              }
               onNavigateToTab={(tab) => setActiveTab(tab)}
               recalculationBanner={recalculationBanner}
               onDismissRecalculationBanner={() => setRecalculationBanner(null)}
@@ -337,6 +445,10 @@ export default function App() {
               }}
               vessel={vessel}
             />
+          )}
+
+          {activeTab === 'route-history' && (
+            <RouteHistoryPage />
           )}
 
           {activeTab === 'explainable-ai' && (

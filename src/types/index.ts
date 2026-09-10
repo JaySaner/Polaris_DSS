@@ -185,6 +185,15 @@ export interface CandidateRoute {
   rationale: string;
 }
 
+export interface HistoricalRoute extends CandidateRoute {
+  dateCompleted: string;
+  missionObjective: string;
+  vesselName: string;
+  actualFuelUsedL: number;
+  actualTimeHours: number;
+  incidents: number;
+}
+
 export interface NavAlert {
   id: string;
   type: 'CRITICAL' | 'WARNING' | 'ADVISORY' | 'NORMAL';
