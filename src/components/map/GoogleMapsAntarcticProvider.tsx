@@ -86,15 +86,27 @@ export const GoogleMapsAntarcticProvider: React.FC<GoogleMapsAntarcticProps> = (
       if (!mapContainerRef.current || !window.google) return;
 
       // Initialize map centered at Antarctic Prydz Bay / Southern Ocean transit zone
+      // Restrict bounds to prevent world repetition (tiling) in polar satellite view
+      const southernHemisphereBounds = new window.google.maps.LatLngBounds(
+        { lat: -85, lng: -180 }, // SW corner
+        { lat: -20, lng: 180 }  // NE corner
+      );
+
       const map = new window.google.maps.Map(mapContainerRef.current, {
         center: { lat: -66.5, lng: 70.0 }, // Prydz Bay / Bharati corridor
         zoom: 4,
+        minZoom: 3,
+        maxZoom: 18,
         mapTypeId: 'satellite',
         backgroundColor: '#030712',
         tilt: 0,
         mapTypeControl: true,
         streetViewControl: false,
         fullscreenControl: false,
+        restriction: {
+          latLngBounds: southernHemisphereBounds,
+          strictBounds: false,
+        },
       });
 
       mapInstanceRef.current = map;
